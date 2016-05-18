@@ -1,0 +1,29 @@
+{
+  "name": "bedom",
+  "version": "0.0.1",
+  "description": "Behavioural DOM",
+  "homepage": "https://github.com/MisterK/bedom",
+  "scripts": {
+    "start": "node ./app"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:MisterK/bedom.git"
+  },
+  "keywords": [
+    "Behavioural",
+    "DOM",
+    "Descriptive"
+  ],
+  "author": "Arnaud Dumont",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "express": "~4.0.0",
+    "debug": "~0.7.4",
+    "jquery": "2.2.3",
+    "virtual-dom": "2.1.1",
+    "html2hscript": "2.0.1",
+    "monet": "0.8.10",
+    "dom2hscript": "0.2.3"
+  }
+}

@@ -1,0 +1,17 @@
+## IntelliJ
+*.iml
+.idea
+.idea_modules
+
+## Mac stuff
+.DS_Store
+
+tmp
+node_modules
+bower_components
+web_modules
+npm-debug.log
+public
+.tmp
+target
+log
