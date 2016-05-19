@@ -1,8 +1,8 @@
 var thisTagFn = require('./thisTag.js');
 
-var execute = function(beDOMNodes) {
+var execute = function(executionContext, beDOMNodes) {
     _.each(beDOMNodes, function(beDOMNode) {
-        var thisTag = thisTagFn(beDOMNode);
+        var thisTag = thisTagFn(executionContext, beDOMNodes, beDOMNode);
         try {
             eval(beDOMNode.commands);
         } catch (e) {

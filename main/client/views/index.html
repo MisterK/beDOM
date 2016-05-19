@@ -8,18 +8,21 @@
     <body>
         Input: <input type="text" id="inputField" />
                 <script language="BeDOM" forTag="inputField">
+                    thisTag.do('CHANGE_COLOR_TO', ['green']).when('IS_NOT_EMPTY');
+                </script>
+                <script language="TODO" forTag="inputField">
                     thisTag.captureValueFor('form', '/field1/field2');
-                    thisTag.do('CHANGE_STATUS_TO',['invalid']).when('IS', ['empty']);
+                    thisTag.do('CHANGE_STATUS_TO',['invalid']).when('IS_EMPTY').andRevertOtherwise();
                 </script>
         <br />
         Output: Hello <span id="outputField"></span>
-                <script language="BeDOM" forTag="outputField">
+                <script language="TODO" forTag="outputField">
                     thisTag.displayValueFrom('form', '/field1/field2');
                 </script>
         <div id="errorMessage" style="display: none;">ERROR</div>
-        <script language="BeDOM" forTag="errorMessage">
-                thisTag.do('SHOW').do('CHANGE_COLOR_TO', ['red']).when('ELEMENT', ['inputField', 'CHANGE_STATUS_TO', ['invalid']]).andRevertOtherwise();
-            </script>
+        <script language="TODO" forTag="errorMessage">
+            thisTag.do('SHOW').do('CHANGE_COLOR_TO', ['red']).when('ELEMENT', ['inputField', 'CHANGE_STATUS_TO', ['invalid']]).andRevertOtherwise();
+        </script>
 
 
         <script type="text/javascript" src="resources/js/lib/jquery.min.js"></script>

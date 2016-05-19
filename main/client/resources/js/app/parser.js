@@ -5,9 +5,10 @@ var parse = function () {
 
     $("script[language='BeDOM']").each(function () {
         var scriptNode = $(this);
+        var targetTagId = scriptNode.attr("forTag");
 
-        var beDOMNode = $("[id='" + scriptNode.attr("forTag") + "'"); //TODO find a quicker way to get to the node
-        if (_.isUndefined(beDOMNode)) {
+        var targetDOMNode = $("[id='" + targetTagId + "'"); //TODO find a quicker way to get to the node
+        if (_.isUndefined(targetDOMNode)) {
             console.error('BeDOM script node without parent');
             return; //TODO use Maybe instead
         }
@@ -16,8 +17,11 @@ var parse = function () {
         console.log('Found BeDOM script:\n ' + nodeText);
 
         beDOMNodes.push({
-            hscript: dom2hscript.parseDOM(beDOMNode[0]),
-            commands: nodeText
+            targetTagId: targetTagId,
+            targetDOMNode: targetDOMNode,
+            hscript: dom2hscript.parseDOM(targetDOMNode[0]),
+            commands: nodeText,
+            triggerContexts: []
         });
     });
 
