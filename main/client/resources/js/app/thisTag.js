@@ -1,36 +1,42 @@
+var diff = require('virtual-dom/diff');
+var patch = require('virtual-dom/patch');
+
 module.exports = function(executionContext, beDOMNodes, currentBeDOMNode) {
     var registeredActionCallbacks = [];
 
     var bindEventOnBeDOMNode = function(event) {
-        var targetBeDOMNode = event.data;
-        if (_.isUndefined(targetBeDOMNode)) {
+        var eventTargetBeDOMNode = event.data;
+        if (_.isUndefined(eventTargetBeDOMNode)) {
             console.error('Could not find related beDOMNode when receiving event on DOM node');
             return this;
         }
-        _(targetBeDOMNode.triggerContexts).filter(function(triggerContext) {
+        console.log('Event ' + event.type + ' triggered on BeDOMNode ' + eventTargetBeDOMNode.targetTagId);
+        _(eventTargetBeDOMNode.triggerContexts).filter(function(triggerContext) {
             return triggerContext.trigger.bindingEvent == event.type; //Retrieve the trigger contexts for the given event
         }).filter(function(triggerContext) {
-            return triggerContext.trigger.triggerFunction(targetBeDOMNode.targetDOMNode); //Keep the ones that were activated
+            return triggerContext.trigger.triggerFunction(eventTargetBeDOMNode.targetDOMNode); //Keep the ones that were activated
         }).groupBy(function(triggerContext) {
             return triggerContext.targetBeDOMNode.targetTagId;
         }).values().each(function (triggerContextsForBeDOMElement) {
-            //console.log(triggerContextsForBeDOMElement);
+            var targetBeDOMNode = triggerContextsForBeDOMElement[0].targetBeDOMNode;
+            console.log('=> ' + triggerContextsForBeDOMElement.length + ' triggerContext(s) found for BeDOMNode '
+                + targetBeDOMNode.targetTagId);
+            //Get all transfunctors for all activated triggerContexts
             var transFunctors = _(triggerContextsForBeDOMElement).map(function(triggerContextForBeDOMElement) {
                 return _.map(triggerContextForBeDOMElement.actionCallbacks, function(actionCallback) {
                     return actionCallback.transFunctors;
                 });
             }).flatten().value();
-            //console.log(transFunctors);
+            console.log('=> ' + transFunctors.length + ' transFunctor(s) found for BeDOMNode '
+                + targetBeDOMNode.targetTagId);
+            //Compose all transFunctors into one
             var reducedTransfunctors = transFunctors[0].composeTransFunctors(transFunctors);
-            var result = reducedTransfunctors.transFunction('blah', triggerContextsForBeDOMElement[0].targetBeDOMNode);
-            //console.log(result);
-            /*console.log('Found triggerContextsForBeDOMElement for element "' + targetBeDOMNode.targetTagId
-                + '" for trigger "' + triggerContextsForBeDOMElement.trigger.name
-                + '" with ' + triggerContextsForBeDOMElement.actionCallbacks.length + ' actionCallback(s) to execute');
-            //TODO Compose the actionCallbacks to get the final transformed beDOMElement
-            _.reduce(triggerContextsForBeDOMElement.actionCallbacks, function(actionCallback) {
-                actionCallback.transFunctors(actionCallback.actionArgs, triggerContextsForBeDOMElement.targetBeDOMNode);
-            });*/
+            //Execute composed transFunction
+            var resultBeDOMNode = reducedTransfunctors.transFunction('blah', targetBeDOMNode);
+            //Calculate resulting diffs between original hscript and resulting hscript
+            var patches = diff(targetBeDOMNode.origHscript, resultBeDOMNode.hscript);
+            //Apply changes to DOM
+            resultBeDOMNode.targetDOMNode = $(patch(resultBeDOMNode.targetDOMNode[0], patches));
         });
     };
 

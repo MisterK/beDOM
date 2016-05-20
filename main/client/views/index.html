@@ -8,11 +8,12 @@
     <body>
         Input: <input type="text" id="inputField" />
                 <script language="BeDOM" forTag="inputField">
-                    thisTag.do('CHANGE_COLOR_TO', ['green']).when('IS_NOT_EMPTY');
-                    thisTag.do('CHANGE_COLOR_TO', ['orange']).when('IS_NOT_EMPTY');
+                    thisTag.do('CHANGE_COLOR_TO', ['orange']).do('CHANGE_BGCOLOR_TO', ['green']).when('IS_NOT_EMPTY');
+                    thisTag.do('CHANGE_COLOR_TO', ['red']).when('IS_EMPTY');
+                    thisTag.do('CHANGE_BGCOLOR_TO', ['white']).when('IS_EMPTY');
                 </script>
                 <script language="TODO" forTag="inputField">
-                    thisTag.do('CHANGE_COLOR_TO', ['red']).when('IS_EMPTY');
+                    thisTag.do('CHANGE_COLOR_TO', ['orange']).when('IS_NOT_EMPTY');
                     thisTag.captureValueFor('form', '/field1/field2');
                     thisTag.do('CHANGE_STATUS_TO',['invalid']).when('IS_EMPTY').andRevertOtherwise();
                 </script>

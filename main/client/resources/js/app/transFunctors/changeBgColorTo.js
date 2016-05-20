@@ -1,5 +1,5 @@
 module.exports = {
-    name: 'CHANGE_COLOR_TO',
+    name: 'CHANGE_BGCOLOR_TO',
     transFunction: function(source, beDOMNode) {
         var targetColor = (this.actionArgs || [])[0];
         if (!_.isString(targetColor)) {
@@ -13,7 +13,7 @@ module.exports = {
         if (!newHScript.properties.style) {
             newHScript.properties.style = {};
         }
-        newHScript.properties.style.color = targetColor;
+        newHScript.properties.style['background-color'] = targetColor;
 
         return beDOMNode.cloneWithNewHScript(newHScript);
     }

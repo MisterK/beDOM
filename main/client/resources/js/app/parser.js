@@ -1,4 +1,5 @@
 var dom2hscript = require('dom2hscript');
+var h = require('virtual-dom/h');
 
 var parse = function () {
     var beDOMNodes = [];
@@ -24,12 +25,34 @@ var parse = function () {
             return; //TODO use Maybe instead
         }
 
+        var hscript;
+        var origHscript;
+        try {
+            hscript = eval(dom2hscript.parseDOM(targetDOMNode[0]));
+            origHscript = eval(dom2hscript.parseDOM(targetDOMNode[0]));
+        } catch (e) {
+            console.error("Error while evaluating beDOMNode's hscript: " + e);
+            return; //TODO use Maybe instead
+        }
+
         beDOMNodes.push({
             targetTagId: targetTagId,
             targetDOMNode: targetDOMNode,
-            hscript: dom2hscript.parseDOM(targetDOMNode[0]),
+            hscript: hscript,
+            origHscript: origHscript,
             commands: nodeText,
-            triggerContexts: []
+            triggerContexts: [],
+            cloneWithNewHScript: function(newHScript) {
+                return {
+                    targetTagId: this.targetTagId,
+                    targetDOMNode: this.targetDOMNode,
+                    hscript: newHScript,
+                    origHscript: this.origHscript,
+                    commands: this.commands,
+                    triggerContexts: this.triggerContexts,
+                    cloneWithNewHScript: this.cloneWithNewHScript
+                };
+            }
         });
     });
 

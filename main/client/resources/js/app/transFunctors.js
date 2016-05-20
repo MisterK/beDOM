@@ -37,9 +37,9 @@ var getTransFunctorsByNameForArgs = function(name, actionArgs) {
         return;
     }
     return {
-        name: name,
-        actionArgs: actionArgs,
-        transFunction: _.bind(registeredTransFunctor.transFunction, { actionArgs: actionArgs }),
+        name: name, //TODO to remove?
+        actionArgs: actionArgs, //TODO to remove?
+        transFunction: _.bind(registeredTransFunctor.transFunction, { name: name, actionArgs: actionArgs }),
         composeTransFunctors: composeTransFunctors
     };
 };

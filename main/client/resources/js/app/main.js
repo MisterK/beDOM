@@ -9,6 +9,7 @@ triggers.addTrigger(require('./triggers/isNotEmpty.js'));
 //Register the transFunctors
 var transFunctors = require('./transFunctors.js');
 transFunctors.addTransFunctor(require('./transFunctors/changeColorTo.js'));
+transFunctors.addTransFunctor(require('./transFunctors/changeBgColorTo.js'));
 
 //Create the executionContext
 var executionContext = {
