@@ -9,14 +9,18 @@
         Input: <input type="text" id="inputField" />
                 <script language="BeDOM" forTag="inputField">
                     thisTag.do('CHANGE_COLOR_TO', ['orange']).do('CHANGE_BGCOLOR_TO', ['green']).when('IS_NOT_EMPTY');
-                    thisTag.do('CHANGE_COLOR_TO', ['red']).when('IS_EMPTY');
+
+                    thisTag.do('CHANGE_COLOR_TO', ['black']).when('IS_EMPTY');
                     thisTag.do('CHANGE_BGCOLOR_TO', ['white']).when('IS_EMPTY');
+
+                    thisTag.do('CHANGE_COLOR_TO', ['red']).when('IS_LONGER_THAN', [3]);
+
+                    thisTag.do('CHANGE_FONT_SIZE_TO', ['14px']).when('ELEMENT', ['inputField2', 'IS_LONGER_THAN', [4]]);
                 </script>
-                <script language="TODO" forTag="inputField">
-                    thisTag.do('CHANGE_COLOR_TO', ['orange']).when('IS_NOT_EMPTY');
-                    thisTag.captureValueFor('form', '/field1/field2');
-                    thisTag.do('CHANGE_STATUS_TO',['invalid']).when('IS_EMPTY').andRevertOtherwise();
-                </script>
+        <br />
+        Other input:  <input type="text" id="inputField2" />
+                    <script language="BeDOM" forTag="inputField2">
+                    </script>
         <br />
         Output: Hello <span id="outputField"></span>
                 <script language="TODO" forTag="outputField">
@@ -25,6 +29,14 @@
         <div id="errorMessage" style="display: none;">ERROR</div>
         <script language="TODO" forTag="errorMessage">
             thisTag.do('SHOW').do('CHANGE_COLOR_TO', ['red']).when('ELEMENT', ['inputField', 'CHANGE_STATUS_TO', ['invalid']]).andRevertOtherwise();
+        </script>
+
+        <br/>
+        TODO:
+        <script language="TODO" forTag="inputField">
+                    thisTag.do('CHANGE_COLOR_TO', ['orange']).when('IS_NOT_EMPTY');
+                    thisTag.captureValueFor('form', '/field1/field2');
+                    thisTag.do('CHANGE_STATUS_TO',['invalid']).when('IS_EMPTY').andRevertOtherwise();
         </script>
 
 

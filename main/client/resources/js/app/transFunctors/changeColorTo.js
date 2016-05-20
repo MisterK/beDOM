@@ -13,7 +13,6 @@ module.exports = {
         var newHScript = _.cloneDeep(beDOMNode.hscript);
         newHScript.__proto__ = VNode.prototype;
 
-        console.log(newHScript);
         if (!newHScript.properties.style) {
             newHScript.properties.style = {};
         }

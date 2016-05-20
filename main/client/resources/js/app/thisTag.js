@@ -14,7 +14,8 @@ module.exports = function(executionContext, beDOMNodes, currentBeDOMNode) {
         _(eventTargetBeDOMNode.triggerContexts).filter(function(triggerContext) {
             return triggerContext.trigger.bindingEvent == event.type; //Retrieve the trigger contexts for the given event
         }).filter(function(triggerContext) {
-            return triggerContext.trigger.triggerFunction(eventTargetBeDOMNode.targetDOMNode); //Keep the ones that were activated
+            return triggerContext.trigger.triggerFunction(
+                eventTargetBeDOMNode.targetDOMNode, triggerContext.triggerArguments); //Keep the ones that were activated
         }).groupBy(function(triggerContext) {
             return triggerContext.targetBeDOMNode.targetTagId;
         }).values().each(function (triggerContextsForBeDOMElement) {
@@ -46,6 +47,7 @@ module.exports = function(executionContext, beDOMNodes, currentBeDOMNode) {
             patch(resultBeDOMNode.targetDOMNode[0], patches);
             //Mutate original node, as it's the new cycle
             targetBeDOMNode.origHscript = resultBeDOMNode.hscript;
+            targetBeDOMNode.hscript = resultBeDOMNode.hscript;
         });
     };
 
@@ -66,6 +68,7 @@ module.exports = function(executionContext, beDOMNodes, currentBeDOMNode) {
         when: function(triggerName, triggerArgs) {
             var targetBeDOMNode = currentBeDOMNode;
             var triggerAction = triggerName;
+            var triggerArguments = triggerArgs;
             //If trigger is on another element
             if (triggerName == 'ELEMENT') {
                 var targetTagId = triggerArgs[0];
@@ -77,6 +80,7 @@ module.exports = function(executionContext, beDOMNodes, currentBeDOMNode) {
                     return this;
                 }
                 triggerAction = triggerArgs[1];
+                triggerArguments = triggerArgs[2] || [];
             }
             var targetTrigger = executionContext.triggers.getTriggerByName(triggerAction);
             if (_.isUndefined(targetTrigger)) {
@@ -93,6 +97,7 @@ module.exports = function(executionContext, beDOMNodes, currentBeDOMNode) {
             //Register current action callbacks to BeDOMNode for trigger
             targetBeDOMNode.triggerContexts.push({
                 trigger: targetTrigger,
+                triggerArguments: triggerArguments,
                 targetBeDOMNode: currentBeDOMNode,
                 actionCallbacks: _.clone(registeredActionCallbacks)
             });

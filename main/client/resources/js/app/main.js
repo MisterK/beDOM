@@ -5,11 +5,13 @@ var formDataSource = dataSources.createDataSource('form'); //TODO Create on firs
 var triggers = require('./triggers.js');
 triggers.addTrigger(require('./triggers/isEmpty.js'));
 triggers.addTrigger(require('./triggers/isNotEmpty.js'));
+triggers.addTrigger(require('./triggers/isLongerThan.js'));
 
 //Register the transFunctors
 var transFunctors = require('./transFunctors.js');
 transFunctors.addTransFunctor(require('./transFunctors/changeColorTo.js'));
 transFunctors.addTransFunctor(require('./transFunctors/changeBgColorTo.js'));
+transFunctors.addTransFunctor(require('./transFunctors/changeFontSizeTo.js'));
 
 //Create the executionContext
 var executionContext = {

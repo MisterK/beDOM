@@ -1,13 +1,13 @@
 var VNode = require('virtual-dom/vnode/vnode');
 
 module.exports = {
-    name: 'CHANGE_BGCOLOR_TO',
+    name: 'CHANGE_FONT_SIZE_TO',
     transFunction: function(source, beDOMNode) {
-        var targetColor = (this.actionArgs || [])[0];
-        if (!_.isString(targetColor)) {
-            console.error('Color required as first argument');
+        var targetSize = (this.actionArgs || [])[0];
+        if (!_.isString(targetSize)) {
+            console.error('Size required as first argument');
         }
-        console.log('==> executing transFunctor: ' + this.name + ', targetColor: ' + targetColor);
+        console.log('==> executing transFunctor: ' + this.name + ', targetSize: ' + targetSize);
 
         //TODO extract and change this shit
         var newHScript = _.cloneDeep(beDOMNode.hscript);
@@ -16,7 +16,7 @@ module.exports = {
         if (!newHScript.properties.style) {
             newHScript.properties.style = {};
         }
-        newHScript.properties.style['background-color'] = targetColor;
+        newHScript.properties.style['font-size'] = targetSize;
 
         return beDOMNode.cloneWithNewHScript(newHScript);
     }
