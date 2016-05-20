@@ -35,8 +35,17 @@ module.exports = function(executionContext, beDOMNodes, currentBeDOMNode) {
             var resultBeDOMNode = reducedTransfunctors.transFunction('blah', targetBeDOMNode);
             //Calculate resulting diffs between original hscript and resulting hscript
             var patches = diff(targetBeDOMNode.origHscript, resultBeDOMNode.hscript);
+            if (_.isObject(patches[0])) {
+                console.log('=> DOM patches to be applied');
+            } else {
+                console.log('=> No DOM patches to be applied');
+            }
+
+            //TODO Part with side-effect, move this to Monet.IO
             //Apply changes to DOM
-            resultBeDOMNode.targetDOMNode = $(patch(resultBeDOMNode.targetDOMNode[0], patches));
+            patch(resultBeDOMNode.targetDOMNode[0], patches);
+            //Mutate original node, as it's the new cycle
+            targetBeDOMNode.origHscript = resultBeDOMNode.hscript;
         });
     };
 

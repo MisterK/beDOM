@@ -1,3 +1,5 @@
+var VNode = require('virtual-dom/vnode/vnode');
+
 module.exports = {
     name: 'CHANGE_COLOR_TO',
     transFunction: function(source, beDOMNode) {
@@ -7,7 +9,9 @@ module.exports = {
         }
         console.log('==> executing transFunctor: ' + this.name + ', targetColor: ' + targetColor);
 
-        var newHScript = beDOMNode.hscript; //TODO _.cloneDeep(beDOMNode.hscript);
+        //TODO extract and change this shit
+        var newHScript = _.cloneDeep(beDOMNode.hscript);
+        newHScript.__proto__ = VNode.prototype;
 
         console.log(newHScript);
         if (!newHScript.properties.style) {
