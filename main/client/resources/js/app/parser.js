@@ -26,10 +26,8 @@ var parse = function () {
         }
 
         var hscript;
-        var origHscript;
         try {
             hscript = eval(dom2hscript.parseDOM(targetDOMNode[0]));
-            origHscript = eval(dom2hscript.parseDOM(targetDOMNode[0]));
         } catch (e) {
             console.error("Error while evaluating beDOMNode's hscript: " + e);
             return; //TODO use Maybe instead
@@ -39,7 +37,6 @@ var parse = function () {
             targetTagId: targetTagId,
             targetDOMNode: targetDOMNode,
             hscript: hscript,
-            origHscript: origHscript,
             commands: nodeText,
             triggerContexts: [],
             cloneWithNewHScript: function(newHScript) {
@@ -47,7 +44,6 @@ var parse = function () {
                     targetTagId: this.targetTagId,
                     targetDOMNode: this.targetDOMNode,
                     hscript: newHScript,
-                    origHscript: this.origHscript,
                     commands: this.commands,
                     triggerContexts: this.triggerContexts,
                     cloneWithNewHScript: this.cloneWithNewHScript

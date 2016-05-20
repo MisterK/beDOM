@@ -35,7 +35,7 @@ module.exports = function(executionContext, beDOMNodes, currentBeDOMNode) {
             //Execute composed transFunction
             var resultBeDOMNode = reducedTransfunctors.transFunction('blah', targetBeDOMNode);
             //Calculate resulting diffs between original hscript and resulting hscript
-            var patches = diff(targetBeDOMNode.origHscript, resultBeDOMNode.hscript);
+            var patches = diff(targetBeDOMNode.hscript, resultBeDOMNode.hscript);
             if (_.isObject(patches[0])) {
                 console.log('=> DOM patches to be applied');
             } else {
@@ -46,7 +46,6 @@ module.exports = function(executionContext, beDOMNodes, currentBeDOMNode) {
             //Apply changes to DOM
             patch(resultBeDOMNode.targetDOMNode[0], patches);
             //Mutate original node, as it's the new cycle
-            targetBeDOMNode.origHscript = resultBeDOMNode.hscript;
             targetBeDOMNode.hscript = resultBeDOMNode.hscript;
         });
     };
