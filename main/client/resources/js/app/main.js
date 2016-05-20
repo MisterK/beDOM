@@ -1,14 +1,16 @@
+//Initialise the dataSources
 var dataSources = require('./dataSources.js');
-var formDataSource = dataSources.createDataSource('form'); //TODO Later: Create on first binding
 
 //Register the triggers
 var triggers = require('./triggers.js');
+triggers.addTrigger(require('./triggers/changes.js'));
 triggers.addTrigger(require('./triggers/isEmpty.js'));
 triggers.addTrigger(require('./triggers/isNotEmpty.js'));
 triggers.addTrigger(require('./triggers/isLongerThan.js'));
 
 //Register the transFunctors
 var transFunctors = require('./transFunctors.js');
+transFunctors.addTransFunctor(require('./transFunctors/captureValueFor.js'));
 transFunctors.addTransFunctor(require('./transFunctors/changeColorTo.js'));
 transFunctors.addTransFunctor(require('./transFunctors/changeBgColorTo.js'));
 transFunctors.addTransFunctor(require('./transFunctors/changeFontSizeTo.js'));

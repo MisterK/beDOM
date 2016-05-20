@@ -1,5 +1,3 @@
-var VNode = require('virtual-dom/vnode/vnode');
-
 module.exports = {
     name: 'CHANGE_FONT_SIZE_TO',
     transFunction: function(source, beDOMNode) {
@@ -9,10 +7,7 @@ module.exports = {
         }
         console.log('==> executing transFunctor: ' + this.name + ', targetSize: ' + targetSize);
 
-        //TODO extract and change this shit
-        var newHScript = _.cloneDeep(beDOMNode.hscript);
-        newHScript.__proto__ = VNode.prototype;
-
+        var newHScript = beDOMNode.cloneHScript();
         if (!newHScript.properties.style) {
             newHScript.properties.style = {};
         }

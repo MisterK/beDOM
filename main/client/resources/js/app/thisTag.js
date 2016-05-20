@@ -45,8 +45,15 @@ module.exports = function(executionContext, beDOMNodes, currentBeDOMNode) {
             //TODO Later: Part with side-effect, move this to Monet.IO
             //Apply changes to DOM
             patch(resultBeDOMNode.targetDOMNode[0], patches);
-            //Mutate original node, as it's the new cycle
+            //Persist data changes
+            console.log('=> ' + resultBeDOMNode.dataChanges.length + ' dataChange(s) to be applied');
+            _.each(resultBeDOMNode.dataChanges, function(dataChange) {
+                executionContext.dataSources.getDataSource(dataChange.dataSourceName)
+                    .setFieldValue(dataChange.fieldName, dataChange.newValue);
+            });
+            //Clean (Mutate) original node, as it's the new cycle
             targetBeDOMNode.hscript = resultBeDOMNode.hscript;
+            targetBeDOMNode.dataChanges.length = 0;
         });
     };
 
@@ -105,10 +112,6 @@ module.exports = function(executionContext, beDOMNodes, currentBeDOMNode) {
         },
         andRevertOtherwise: function() {
             //TODO register functor to revert to original hnode + register opposite event listener which triggers that functor
-            return this;
-        },
-        captureValueFor: function() {
-            //TODO register capture value into stor functor + register event listener on tag which triggers that functor
             return this;
         },
         displayValueFrom: function() {

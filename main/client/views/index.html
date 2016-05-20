@@ -20,6 +20,7 @@
         <br />
         Other input:  <input type="text" id="inputField2" />
                     <script language="BeDOM" forTag="inputField2">
+                        thisTag.do('CAPTURE_VALUE_FOR', ['form', '/field1/field2']).when('CHANGES');
                     </script>
         <br />
         Output: Hello <span id="outputField"></span>
@@ -35,7 +36,6 @@
         TODO:
         <script language="TODO" forTag="inputField">
                     thisTag.do('CHANGE_COLOR_TO', ['orange']).when('IS_NOT_EMPTY');
-                    thisTag.captureValueFor('form', '/field1/field2');
                     thisTag.do('CHANGE_STATUS_TO',['invalid']).when('IS_EMPTY').andRevertOtherwise();
         </script>
 

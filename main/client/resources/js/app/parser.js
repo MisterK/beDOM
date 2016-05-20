@@ -1,5 +1,6 @@
 var dom2hscript = require('dom2hscript');
 var h = require('virtual-dom/h');
+var VNode = require('virtual-dom/vnode/vnode');
 
 var parse = function () {
     var beDOMNodes = [];
@@ -33,12 +34,13 @@ var parse = function () {
             return; //TODO Minor: use Maybe instead
         }
 
-        beDOMNodes.push({
+        beDOMNodes.push({ //TODO Move to constructor function
             targetTagId: targetTagId,
             targetDOMNode: targetDOMNode,
             hscript: hscript,
             commands: nodeText,
             triggerContexts: [],
+            dataChanges: [],
             cloneWithNewHScript: function(newHScript) {
                 return {
                     targetTagId: this.targetTagId,
@@ -46,8 +48,31 @@ var parse = function () {
                     hscript: newHScript,
                     commands: this.commands,
                     triggerContexts: this.triggerContexts,
-                    cloneWithNewHScript: this.cloneWithNewHScript
+                    dataChanges: this.dataChanges,
+                    cloneWithNewHScript: this.cloneWithNewHScript,
+                    cloneWithNewDataChange: this.cloneWithNewDataChange,
+                    cloneHScript: this.cloneHScript
                 };
+            },
+            cloneWithNewDataChange: function(dataChange) {
+                var newDataChanges = _.clone(this.dataChanges);
+                newDataChanges.push(dataChange);
+                return {
+                    targetTagId: this.targetTagId,
+                    targetDOMNode: this.targetDOMNode,
+                    hscript: this.cloneHScript(),
+                    commands: this.commands,
+                    triggerContexts: this.triggerContexts,
+                    dataChanges: newDataChanges,
+                    cloneWithNewHScript: this.cloneWithNewHScript,
+                    cloneWithNewDataChange: this.cloneWithNewDataChange,
+                    cloneHScript: this.cloneHScript
+                };
+            },
+            cloneHScript: function() {
+                var newHScript = _.cloneDeep(this.hscript);
+                newHScript.__proto__ = VNode.prototype;
+                return newHScript;
             }
         });
     });
