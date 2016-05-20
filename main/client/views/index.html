@@ -9,8 +9,10 @@
         Input: <input type="text" id="inputField" />
                 <script language="BeDOM" forTag="inputField">
                     thisTag.do('CHANGE_COLOR_TO', ['green']).when('IS_NOT_EMPTY');
+                    thisTag.do('CHANGE_COLOR_TO', ['orange']).when('IS_NOT_EMPTY');
                 </script>
                 <script language="TODO" forTag="inputField">
+                    thisTag.do('CHANGE_COLOR_TO', ['red']).when('IS_EMPTY');
                     thisTag.captureValueFor('form', '/field1/field2');
                     thisTag.do('CHANGE_STATUS_TO',['invalid']).when('IS_EMPTY').andRevertOtherwise();
                 </script>
@@ -26,7 +28,7 @@
 
 
         <script type="text/javascript" src="resources/js/lib/jquery.min.js"></script>
-        <script type="text/javascript" src="resources/js/lib/lodash-2.4.1.min.js"></script>
+        <script type="text/javascript" src="resources/js/lib/lodash-2.4.1.js"></script>
         <script type="text/javascript" src="resources/js/public/bundle.js"></script>
     </body>
 </html>

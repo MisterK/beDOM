@@ -11,13 +11,25 @@ module.exports = function(executionContext, beDOMNodes, currentBeDOMNode) {
             return triggerContext.trigger.bindingEvent == event.type; //Retrieve the trigger contexts for the given event
         }).filter(function(triggerContext) {
             return triggerContext.trigger.triggerFunction(targetBeDOMNode.targetDOMNode); //Keep the ones that were activated
-        }).each(function(triggerContext) {
-            console.log('Found triggerContext for element "' + targetBeDOMNode.targetTagId
-                + '" for trigger "' + triggerContext.trigger.name
-                + '" with ' + triggerContext.actionCallbacks.length + ' actionCallback(s) to execute');
+        }).groupBy(function(triggerContext) {
+            return triggerContext.targetBeDOMNode.targetTagId;
+        }).values().each(function (triggerContextsForBeDOMElement) {
+            //console.log(triggerContextsForBeDOMElement);
+            var transFunctors = _(triggerContextsForBeDOMElement).map(function(triggerContextForBeDOMElement) {
+                return _.map(triggerContextForBeDOMElement.actionCallbacks, function(actionCallback) {
+                    return actionCallback.transFunctors;
+                });
+            }).flatten().value();
+            //console.log(transFunctors);
+            var reducedTransfunctors = transFunctors[0].composeTransFunctors(transFunctors);
+            var result = reducedTransfunctors.transFunction('blah', triggerContextsForBeDOMElement[0].targetBeDOMNode);
+            //console.log(result);
+            /*console.log('Found triggerContextsForBeDOMElement for element "' + targetBeDOMNode.targetTagId
+                + '" for trigger "' + triggerContextsForBeDOMElement.trigger.name
+                + '" with ' + triggerContextsForBeDOMElement.actionCallbacks.length + ' actionCallback(s) to execute');
             //TODO Compose the actionCallbacks to get the final transformed beDOMElement
-            /*_.reduce(triggerContext.actionCallbacks, function(actionCallback) {
-                actionCallback.transFunctors(actionCallback.actionArgs, triggerContext.targetBeDOMNode);
+            _.reduce(triggerContextsForBeDOMElement.actionCallbacks, function(actionCallback) {
+                actionCallback.transFunctors(actionCallback.actionArgs, triggerContextsForBeDOMElement.targetBeDOMNode);
             });*/
         });
     };
@@ -25,17 +37,15 @@ module.exports = function(executionContext, beDOMNodes, currentBeDOMNode) {
     return {
         do: function(actionName, actionArgs) {
             //Check has functors for action
-            var transFunctors = executionContext.transFunctors.getTransFunctorsByName(actionName);
-            if (_.isUndefined(transFunctors)) {
-                console.error('No transFunctors registered for this action name ' + actionName);
-                return this;
+            var transFunctors = executionContext.transFunctors.getTransFunctorsByNameForArgs(actionName, actionArgs);
+            if (_.isObject(transFunctors)) {
+                //Register callback
+                registeredActionCallbacks.push({
+                    actionName: actionName, //TODO remove?
+                    actionArgs: actionArgs, //TODO remove?
+                    transFunctors: transFunctors
+                });
             }
-            //Register callback
-            registeredActionCallbacks.push({
-                actionName: actionName,
-                actionArgs: actionArgs,
-                transFunctors: transFunctors
-            });
             return this;
         },
         when: function(triggerName, triggerArgs) {
