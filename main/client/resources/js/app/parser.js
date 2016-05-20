@@ -4,11 +4,11 @@ var h = require('virtual-dom/h');
 var parse = function () {
     var beDOMNodes = [];
 
-    $("script[language='BeDOM']").each(function () {
+    $("script[language='BeDOM']").each(function () { //TODO Minor: Use .map() instead
         var scriptNode = $(this);
         var targetTagId = scriptNode.attr("forTag");
 
-        var nodeText = $.trim(scriptNode.text()); //TODO validate/sanitize contents
+        var nodeText = $.trim(scriptNode.text()); //TODO Later: validate/sanitize contents
         console.log('Found BeDOM script:\n ' + nodeText);
 
         //Do not fully re-process a node that has already been processed
@@ -19,10 +19,10 @@ var parse = function () {
             return;
         }
 
-        var targetDOMNode = $("[id='" + targetTagId + "'"); //TODO find a quicker way to get to the node
+        var targetDOMNode = $("[id='" + targetTagId + "'"); //TODO Minor: find a quicker way to get to the node
         if (_.isUndefined(targetDOMNode)) {
             console.error('Error: BeDOM script node without parent');
-            return; //TODO use Maybe instead
+            return; //TODO Minor: use Maybe instead
         }
 
         var hscript;
@@ -30,7 +30,7 @@ var parse = function () {
             hscript = eval(dom2hscript.parseDOM(targetDOMNode[0]));
         } catch (e) {
             console.error("Error while evaluating beDOMNode's hscript: " + e);
-            return; //TODO use Maybe instead
+            return; //TODO Minor: use Maybe instead
         }
 
         beDOMNodes.push({

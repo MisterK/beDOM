@@ -42,7 +42,7 @@ module.exports = function(executionContext, beDOMNodes, currentBeDOMNode) {
                 console.log('=> No DOM patches to be applied');
             }
 
-            //TODO Part with side-effect, move this to Monet.IO
+            //TODO Later: Part with side-effect, move this to Monet.IO
             //Apply changes to DOM
             patch(resultBeDOMNode.targetDOMNode[0], patches);
             //Mutate original node, as it's the new cycle
@@ -57,8 +57,6 @@ module.exports = function(executionContext, beDOMNodes, currentBeDOMNode) {
             if (_.isObject(transFunctors)) {
                 //Register callback
                 registeredActionCallbacks.push({
-                    actionName: actionName, //TODO remove?
-                    actionArgs: actionArgs, //TODO remove?
                     transFunctors: transFunctors
                 });
             }
@@ -75,6 +73,7 @@ module.exports = function(executionContext, beDOMNodes, currentBeDOMNode) {
                     return beDOMNode.targetTagId == targetTagId;
                 });
                 if (_.isUndefined(targetBeDOMNode)) {
+                    //TODO handle DOMNode by itself, without having to transform it into a beDOMNode
                     console.error('Could not find target beDOMNode of id ' + targetTagId);
                     return this;
                 }
