@@ -23,9 +23,9 @@
                         thisTag.do('CAPTURE_VALUE_FOR', ['form', '/field1/field2']).when('CHANGES');
                     </script>
         <br />
-        Output: Hello <span id="outputField"></span>
-                <script language="TODO" forTag="outputField">
-                    thisTag.displayValueFrom('form', '/field1/field2');
+        Output: Hello <span id="outputField">blah</span>
+                <script language="BeDOM" forTag="outputField">
+                    thisTag.displayValueFrom(['form', '/field1/field2']);
                 </script>
         <div id="errorMessage" style="display: none;">ERROR</div>
         <script language="TODO" forTag="errorMessage">
@@ -35,6 +35,8 @@
         <br/>
         TODO:
         <script language="TODO" forTag="inputField">
+                    TODO THIS => thisTag.do('REFRESH_VALUE').when('DATASOURCE', ['form', '/field1/field2', 'CHANGES']);
+                    thisTag.do('DISPLAY_VALUE_FROM', ['form', '/field1/field2']);
                     thisTag.do('CHANGE_COLOR_TO', ['orange']).when('IS_NOT_EMPTY');
                     thisTag.do('CHANGE_STATUS_TO',['invalid']).when('IS_EMPTY').andRevertOtherwise();
         </script>

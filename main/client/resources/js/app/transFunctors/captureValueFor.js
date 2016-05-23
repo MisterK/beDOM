@@ -10,8 +10,8 @@ module.exports = {
         if (!_.isString(fieldName)) {
             console.error('FieldName required as first argument');
         }
-        console.log('==> executing transFunctor: ' + this.name
-            + ', dataSourceName: ' + dataSourceName + ', fieldName: ' + fieldName);
+        console.log('    ==> executing transFunctor: "' + this.name
+            + '", dataSourceName: "' + dataSourceName + '", fieldName: "' + fieldName + '"');
 
         return beDOMNode.cloneWithNewDataChange({
             dataSourceName: dataSourceName,

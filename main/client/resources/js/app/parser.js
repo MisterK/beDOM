@@ -4,7 +4,7 @@ var VNode = require('virtual-dom/vnode/vnode');
 
 var parse = function () {
     var beDOMNodes = [];
-
+    console.log('============= Parsing phase ==============');
     $("script[language='BeDOM']").each(function () { //TODO Minor: Use .map() instead
         var scriptNode = $(this);
         var targetTagId = scriptNode.attr("forTag");
@@ -20,7 +20,7 @@ var parse = function () {
             return;
         }
 
-        var targetDOMNode = $("[id='" + targetTagId + "'"); //TODO Minor: find a quicker way to get to the node
+        var targetDOMNode = $("[id='" + targetTagId + "']"); //TODO Minor: find a quicker way to get to the node
         if (_.isUndefined(targetDOMNode)) {
             console.error('Error: BeDOM script node without parent');
             return; //TODO Minor: use Maybe instead
@@ -77,6 +77,8 @@ var parse = function () {
         });
     });
 
+    console.log("Found " + beDOMNodes.length + " beDOMNode(s)");
+    console.log("==============================================");
     return beDOMNodes;
 };
 

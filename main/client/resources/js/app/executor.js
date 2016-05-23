@@ -1,6 +1,7 @@
 var thisTagFn = require('./thisTag.js');
 
 var execute = function(executionContext, beDOMNodes) {
+    console.log('============= Binding phase ==============');
     _.each(beDOMNodes, function(beDOMNode) {
         var thisTag = thisTagFn(executionContext, beDOMNodes, beDOMNode);
         try {
@@ -9,6 +10,7 @@ var execute = function(executionContext, beDOMNodes) {
             console.error('Error evaluating BeDOM script:' + e);
         }
     });
+    console.log("==============================================");
 };
 
 module.exports = {

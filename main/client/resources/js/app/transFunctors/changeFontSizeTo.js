@@ -5,7 +5,7 @@ module.exports = {
         if (!_.isString(targetSize)) {
             console.error('Size required as first argument');
         }
-        console.log('==> executing transFunctor: ' + this.name + ', targetSize: ' + targetSize);
+        console.log('    ==> executing transFunctor: "' + this.name + '", targetSize: "' + targetSize + '"');
 
         var newHScript = beDOMNode.cloneHScript();
         if (!newHScript.properties.style) {

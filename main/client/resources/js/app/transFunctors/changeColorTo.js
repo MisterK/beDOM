@@ -6,7 +6,7 @@ module.exports = {
         if (!_.isString(targetColor)) {
             console.error('Color required as first argument');
         }
-        console.log('==> executing transFunctor: ' + this.name + ', targetColor: ' + targetColor);
+        console.log('    ==> executing transFunctor: "' + this.name + '", targetColor: "' + targetColor + '"');
 
         var newHScript = beDOMNode.cloneHScript();
         if (!newHScript.properties.style) {

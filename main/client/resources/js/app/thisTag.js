@@ -10,7 +10,8 @@ module.exports = function(executionContext, beDOMNodes, currentBeDOMNode) {
             console.error('Could not find related beDOMNode when receiving event on DOM node');
             return this;
         }
-        console.log('Event ' + event.type + ' triggered on BeDOMNode ' + eventTargetBeDOMNode.targetTagId);
+	    console.log('============== Event =======================');
+        console.log('Event "' + event.type + '" triggered on BeDOMNode "' + eventTargetBeDOMNode.targetTagId + '"');
         _(eventTargetBeDOMNode.triggerContexts).filter(function(triggerContext) {
             return triggerContext.trigger.bindingEvent == event.type; //Retrieve the trigger contexts for the given event
         }).filter(function(triggerContext) {
@@ -20,20 +21,20 @@ module.exports = function(executionContext, beDOMNodes, currentBeDOMNode) {
             return triggerContext.targetBeDOMNode.targetTagId;
         }).values().each(function (triggerContextsForBeDOMElement) {
             var targetBeDOMNode = triggerContextsForBeDOMElement[0].targetBeDOMNode;
-            console.log('=> ' + triggerContextsForBeDOMElement.length + ' triggerContext(s) found for BeDOMNode '
-                + targetBeDOMNode.targetTagId);
+            console.log('  => ' + triggerContextsForBeDOMElement.length + ' triggerContext(s) found for BeDOMNode "'
+                + targetBeDOMNode.targetTagId+ '"');
             //Get all transfunctors for all activated triggerContexts
             var transFunctors = _(triggerContextsForBeDOMElement).map(function(triggerContextForBeDOMElement) {
                 return _.map(triggerContextForBeDOMElement.actionCallbacks, function(actionCallback) {
                     return actionCallback.transFunctors;
                 });
             }).flatten().value();
-            console.log('=> ' + transFunctors.length + ' transFunctor(s) found for BeDOMNode '
-                + targetBeDOMNode.targetTagId);
+            console.log('  => ' + transFunctors.length + ' transFunctor(s) found for BeDOMNode "'
+                + targetBeDOMNode.targetTagId + '"');
             //Compose all transFunctors into one
             var reducedTransfunctors = transFunctors[0].composeTransFunctors(transFunctors);
             //Execute composed transFunction
-            var resultBeDOMNode = reducedTransfunctors.transFunction('blah', targetBeDOMNode);
+            var resultBeDOMNode = reducedTransfunctors.transFunction('blah', targetBeDOMNode); //TODO what should be the input?
             //Calculate resulting diffs between original hscript and resulting hscript
             var patches = diff(targetBeDOMNode.hscript, resultBeDOMNode.hscript);
             if (_.isObject(patches[0])) {
@@ -72,7 +73,7 @@ module.exports = function(executionContext, beDOMNodes, currentBeDOMNode) {
         when: function(triggerName, triggerArgs) {
             var targetBeDOMNode = currentBeDOMNode;
             var triggerAction = triggerName;
-            var triggerArguments = triggerArgs;
+            var triggerArguments = triggerArgs || [];
             //If trigger is on another element
             if (triggerName == 'ELEMENT') {
                 var targetTagId = triggerArgs[0];
@@ -98,6 +99,8 @@ module.exports = function(executionContext, beDOMNodes, currentBeDOMNode) {
                 }))) {
                 //Bind listener function to current node
                 targetBeDOMNode.targetDOMNode.on(targetTrigger.bindingEvent, targetBeDOMNode, bindEventOnBeDOMNode);
+                console.log('=> Bound event "' + targetTrigger.bindingEvent
+                    + '" on target BeDOMNode"' + targetBeDOMNode.targetTagId + '"')
             }
             //Register current action callbacks to BeDOMNode for trigger
             targetBeDOMNode.triggerContexts.push({
@@ -106,6 +109,9 @@ module.exports = function(executionContext, beDOMNodes, currentBeDOMNode) {
                 targetBeDOMNode: currentBeDOMNode,
                 actionCallbacks: _.clone(registeredActionCallbacks)
             });
+            console.log('=> Registered ' + registeredActionCallbacks.length + ' actionCallbacks for BeDOMNode "'
+                + currentBeDOMNode.targetTagId + '", for trigger "'
+                + triggerAction + '" on target BeDOMNode "' + targetBeDOMNode.targetTagId + '"');
             //Clean state
             registeredActionCallbacks.length = 0;
             return this;
@@ -114,8 +120,45 @@ module.exports = function(executionContext, beDOMNodes, currentBeDOMNode) {
             //TODO register functor to revert to original hnode + register opposite event listener which triggers that functor
             return this;
         },
-        displayValueFrom: function() {
-            //TODO register display functor + register event listener on datasource which triggers that functor
+        displayValueFrom: function(actionArgs) {
+            //TODO merge this method with when(), with dataSourceListenerContexts instead of triggerContexts
+            actionArgs = (actionArgs || []);
+            var dataSourceName = actionArgs[0];
+            if (!_.isString(dataSourceName)) {
+                console.error('DataSourceName required as first argument');
+            }
+            var fieldName = actionArgs[1];
+            if (!_.isString(fieldName)) {
+                console.error('FieldName required as first argument');
+            }
+            console.log('=> Registered callbacks for BeDOMNode "'
+                + currentBeDOMNode.targetTagId + '", for dataSource "'
+                + dataSourceName + '" and field "' + fieldName + '"');
+            executionContext.dataSources.getDataSource(dataSourceName)
+                .registerFieldListener(fieldName, function(newValue, oldValue) {
+                    console.log('============== DataSource Listener =======================');
+                    console.log('Listener triggered on dataSource "'
+                        + dataSourceName + '" and field "' + fieldName
+                        + '" for BeDOMNode "' + currentBeDOMNode.targetTagId + '"');
+                    var transFunctors = executionContext.transFunctors.getTransFunctorsByNameForArgs(
+                        'DISPLAY_VALUE_FROM', [newValue, oldValue]);
+                    //Execute composed transFunction
+                    var resultBeDOMNode = transFunctors.transFunction('blah', currentBeDOMNode);
+                    //Calculate resulting diffs between original hscript and resulting hscript
+                    var patches = diff(currentBeDOMNode.hscript, resultBeDOMNode.hscript);
+                    if (_.isObject(patches[0])) {
+                        console.log('=> DOM patches to be applied');
+                    } else {
+                        console.log('=> No DOM patches to be applied');
+                    }
+
+                    //TODO Later: Part with side-effect, move this to Monet.IO
+                    //Apply changes to DOM
+                    patch(resultBeDOMNode.targetDOMNode[0], patches);
+                    //Clean (Mutate) original node, as it's the new cycle
+                    currentBeDOMNode.hscript = resultBeDOMNode.hscript;
+                    currentBeDOMNode.dataChanges.length = 0;
+            });
             return this;
         }
     };
