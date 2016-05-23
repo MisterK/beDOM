@@ -1,5 +1,5 @@
 module.exports = {
-    name: 'DISPLAY_VALUE_FROM',
+    name: 'REFRESH_VALUE',
     transFunction: function(source, beDOMNode) {
         var actionArgs = (this.actionArgs || []);
         var newValue = actionArgs[0];
@@ -11,8 +11,9 @@ module.exports = {
             console.error('oldValue required as second argument');
         }
         console.log('    ==> executing transFunctor: "' + this.name
-            + '", dataSourceName: "' + newValue + '", oldValue: "' + oldValue + '"');
+            + '", newValue: "' + newValue + '", oldValue: "' + oldValue + '"');
 
+        //TODO This is not working, create VText instead?
         var newHScript = beDOMNode.cloneHScript();
         if (newHScript.children.length == 0) {
             newHScript.children.push({text: newValue});

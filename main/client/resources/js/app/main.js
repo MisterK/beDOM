@@ -11,7 +11,7 @@ triggers.addTrigger(require('./triggers/isLongerThan.js'));
 //Register the transFunctors
 var transFunctors = require('./transFunctors.js');
 transFunctors.addTransFunctor(require('./transFunctors/captureValueFor.js'));
-transFunctors.addTransFunctor(require('./transFunctors/displayValueFrom.js'));
+transFunctors.addTransFunctor(require('./transFunctors/refreshValue.js'));
 transFunctors.addTransFunctor(require('./transFunctors/changeColorTo.js'));
 transFunctors.addTransFunctor(require('./transFunctors/changeBgColorTo.js'));
 transFunctors.addTransFunctor(require('./transFunctors/changeFontSizeTo.js'));

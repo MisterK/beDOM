@@ -40,6 +40,7 @@ var parse = function () {
             hscript: hscript,
             commands: nodeText,
             triggerContexts: [],
+            dataSourceListenerContexts: [],
             dataChanges: [],
             cloneWithNewHScript: function(newHScript) {
                 return {
@@ -48,6 +49,7 @@ var parse = function () {
                     hscript: newHScript,
                     commands: this.commands,
                     triggerContexts: this.triggerContexts,
+                    dataSourceListenerContexts: this.dataSourceListenerContexts,
                     dataChanges: this.dataChanges,
                     cloneWithNewHScript: this.cloneWithNewHScript,
                     cloneWithNewDataChange: this.cloneWithNewDataChange,
@@ -63,6 +65,7 @@ var parse = function () {
                     hscript: this.cloneHScript(),
                     commands: this.commands,
                     triggerContexts: this.triggerContexts,
+                    dataSourceListenerContexts: this.dataSourceListenerContexts,
                     dataChanges: newDataChanges,
                     cloneWithNewHScript: this.cloneWithNewHScript,
                     cloneWithNewDataChange: this.cloneWithNewDataChange,

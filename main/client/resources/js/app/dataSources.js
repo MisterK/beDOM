@@ -18,6 +18,7 @@ var getDataSource = function(name) {
                 return field;
             },
             setFieldValue: function(fieldName, newValue) {
+                var dataSourceName = this.name;
                 var field = this.getField(fieldName);
                 var oldValue = field.value;
                 if (oldValue != newValue) {
@@ -25,7 +26,7 @@ var getDataSource = function(name) {
                         + '" in dataSource "' + this.name + "'");
                     field.value = newValue;
                     _.each(field.listeners, function(listener) {
-                       listener(newValue, oldValue)
+                       listener(dataSourceName, fieldName, newValue, oldValue)
                     });
                 }
             },

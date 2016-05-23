@@ -37,6 +37,7 @@ var getTransFunctorsByNameForArgs = function(name, actionArgs) {
         return;
     }
     return {
+        name: name,
         transFunction: _.bind(registeredTransFunctor.transFunction, { name: name, actionArgs: actionArgs }),
         composeTransFunctors: composeTransFunctors
     };
