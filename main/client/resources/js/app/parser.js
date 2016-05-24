@@ -5,7 +5,7 @@ var VNode = require('virtual-dom/vnode/vnode');
 var parse = function () {
     var beDOMNodes = [];
     console.log('============= Parsing phase ==============');
-    $("script[language='BeDOM']").each(function () { //TODO Minor: Use .map() instead
+    $("script[language='BeDOM']").each(function () { //TODO Minor: Use .reduce() instead, then flatten
         var scriptNode = $(this);
         var targetTagId = scriptNode.attr("forTag");
 
@@ -23,7 +23,7 @@ var parse = function () {
         var targetDOMNode = $("[id='" + targetTagId + "']"); //TODO Minor: find a quicker way to get to the node
         if (_.isUndefined(targetDOMNode)) {
             console.error('Error: BeDOM script node without parent');
-            return; //TODO Minor: use Maybe instead
+            return; //TODO Minor: use Maybe instead, if reducing
         }
 
         var hscript;
@@ -31,7 +31,7 @@ var parse = function () {
             hscript = eval(dom2hscript.parseDOM(targetDOMNode[0]));
         } catch (e) {
             console.error("Error while evaluating beDOMNode's hscript: " + e);
-            return; //TODO Minor: use Maybe instead
+            return; //TODO Minor: use Maybe instead, if reducing
         }
 
         beDOMNodes.push({ //TODO Move to constructor function
