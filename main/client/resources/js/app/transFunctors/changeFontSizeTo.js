@@ -13,6 +13,6 @@ module.exports = {
         }
         newHScript.properties.style['font-size'] = targetSize;
 
-        return beDOMNode.cloneWithNewHScript(newHScript);
+        return beDOMNode.updateHScript(newHScript);
     }
 };

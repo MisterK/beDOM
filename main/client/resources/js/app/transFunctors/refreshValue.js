@@ -13,7 +13,7 @@ module.exports = {
         console.log('    ==> executing transFunctor: "' + this.name
             + '", newValue: "' + newValue + '", oldValue: "' + oldValue + '"');
 
-        //TODO This is not working, create VText instead?
+        //TODO Bug: This is not working, create VText instead?
         var newHScript = beDOMNode.cloneHScript();
         if (newHScript.children.length == 0) {
             newHScript.children.push({text: newValue});
@@ -21,6 +21,6 @@ module.exports = {
             newHScript.children[0].text = newValue;
         }
 
-        return beDOMNode.cloneWithNewHScript(newHScript);
+        return beDOMNode.updateHScript(newHScript);
     }
 };

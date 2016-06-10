@@ -13,10 +13,10 @@ module.exports = {
         console.log('    ==> executing transFunctor: "' + this.name
             + '", dataSourceName: "' + dataSourceName + '", fieldName: "' + fieldName + '"');
 
-        return beDOMNode.cloneWithNewDataChange({
+        return beDOMNode.addDataChange({
             dataSourceName: dataSourceName,
             fieldName: fieldName,
-            newValue: $.trim(beDOMNode.targetDOMNode.val())
+            newValue: $.trim(beDOMNode.targetDOMNode.val()) //TODO Bug: should read from VText
         });
     }
 };

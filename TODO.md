@@ -12,7 +12,6 @@
 - andRevertOtherwise()
 
 == IMPROVEMENTS ==
-- Class/Module for BeDOMNode
 - Move bindEventOnBeDOMNode and registerListenerOnDataSourceField to other module
 - Make bindEventOnBeDOMNode and registerListenerOnDataSourceField return list of changes,
     and do IO in the execution (using Monet.IO?)
@@ -26,6 +25,8 @@
 - contraMap() to transform/filter source?
 - Handle reference to non-BeDOMNode, which can then become one
 - Handle double-adding of transFunctor in addTransFunctor(), currently breaks fn binding to 'this' with actionArgs
+- thisTag should be pure (map array of BeDOMNodes)
+    => no more mutations on BeDOMNode's triggerContexts and dataSourceListenerContexts
 
 == TODO ==
 - Test more complex composition

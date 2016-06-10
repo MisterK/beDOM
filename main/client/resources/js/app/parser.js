@@ -1,6 +1,6 @@
 var dom2hscript = require('dom2hscript');
 var h = require('virtual-dom/h');
-var VNode = require('virtual-dom/vnode/vnode');
+var beDOMNode = require('./nodes/beDOMNode');
 
 var parse = function () {
     var beDOMNodes = [];
@@ -10,13 +10,16 @@ var parse = function () {
         var targetTagId = scriptNode.attr("forTag");
 
         var nodeText = $.trim(scriptNode.text()); //TODO Later: validate/sanitize contents
-        console.log('Found BeDOM script:\n ' + nodeText);
+        console.log('Found BeDOM script for tag "' + targetTagId + '":\n ' + nodeText);
 
         //Do not fully re-process a node that has already been processed
-        var alreadyProcessedNode = _.find(beDOMNodes,
-            function(beDOMNode) { return beDOMNode.targetTagId == targetTagId; });
-        if (!_.isUndefined(alreadyProcessedNode)) {
-            alreadyProcessedNode.commands += " \n" + nodeText;
+        var alreadyProcessedNodeIndex = _.findIndex(beDOMNodes,
+            function (beDOMNode) {
+                return beDOMNode.targetTagId == targetTagId;
+            });
+        if (alreadyProcessedNodeIndex >= 0) {
+            beDOMNodes.splice(alreadyProcessedNodeIndex, 1,
+                beDOMNodes[alreadyProcessedNodeIndex].appendCommands(nodeText));
             return;
         }
 
@@ -34,50 +37,7 @@ var parse = function () {
             return; //TODO Minor: use Maybe instead, if reducing
         }
 
-        beDOMNodes.push({ //TODO Move to constructor function
-            targetTagId: targetTagId,
-            targetDOMNode: targetDOMNode,
-            hscript: hscript,
-            commands: nodeText,
-            triggerContexts: [],
-            dataSourceListenerContexts: [],
-            dataChanges: [],
-            cloneWithNewHScript: function(newHScript) {
-                return {
-                    targetTagId: this.targetTagId,
-                    targetDOMNode: this.targetDOMNode,
-                    hscript: newHScript,
-                    commands: this.commands,
-                    triggerContexts: this.triggerContexts,
-                    dataSourceListenerContexts: this.dataSourceListenerContexts,
-                    dataChanges: this.dataChanges,
-                    cloneWithNewHScript: this.cloneWithNewHScript,
-                    cloneWithNewDataChange: this.cloneWithNewDataChange,
-                    cloneHScript: this.cloneHScript
-                };
-            },
-            cloneWithNewDataChange: function(dataChange) {
-                var newDataChanges = _.clone(this.dataChanges);
-                newDataChanges.push(dataChange);
-                return {
-                    targetTagId: this.targetTagId,
-                    targetDOMNode: this.targetDOMNode,
-                    hscript: this.cloneHScript(),
-                    commands: this.commands,
-                    triggerContexts: this.triggerContexts,
-                    dataSourceListenerContexts: this.dataSourceListenerContexts,
-                    dataChanges: newDataChanges,
-                    cloneWithNewHScript: this.cloneWithNewHScript,
-                    cloneWithNewDataChange: this.cloneWithNewDataChange,
-                    cloneHScript: this.cloneHScript
-                };
-            },
-            cloneHScript: function() {
-                var newHScript = _.cloneDeep(this.hscript);
-                newHScript.__proto__ = VNode.prototype;
-                return newHScript;
-            }
-        });
+        beDOMNodes.push(new beDOMNode(targetTagId, targetDOMNode, hscript, nodeText));
     });
 
     console.log("Found " + beDOMNodes.length + " beDOMNode(s)");

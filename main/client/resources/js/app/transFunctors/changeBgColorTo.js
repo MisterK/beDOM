@@ -13,6 +13,6 @@ module.exports = {
         }
         newHScript.properties.style['background-color'] = targetColor;
 
-        return beDOMNode.cloneWithNewHScript(newHScript);
+        return beDOMNode.updateHScript(newHScript);
     }
 };

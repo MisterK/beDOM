@@ -14,6 +14,6 @@ module.exports = {
         }
         newHScript.properties.style.color = targetColor;
 
-        return beDOMNode.cloneWithNewHScript(newHScript);
+        return beDOMNode.updateHScript(newHScript);
     }
 };

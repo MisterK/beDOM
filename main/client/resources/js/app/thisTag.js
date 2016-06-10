@@ -54,8 +54,7 @@ module.exports = function(executionContext, beDOMNodes, currentBeDOMNode) {
                     .setFieldValue(dataChange.fieldName, dataChange.newValue);
             });
             //Clean (Mutate) original node, as it's the new cycle
-            targetBeDOMNode.hscript = resultBeDOMNode.hscript;
-            targetBeDOMNode.dataChanges.length = 0;
+            targetBeDOMNode.clear(resultBeDOMNode.hscript);
         });
     };
 
@@ -108,8 +107,7 @@ module.exports = function(executionContext, beDOMNodes, currentBeDOMNode) {
                 .setFieldValue(dataChange.fieldName, dataChange.newValue);
         });
         //Clean (Mutate) original node, as it's the new cycle
-        currentBeDOMNode.hscript = resultBeDOMNode.hscript;
-        currentBeDOMNode.dataChanges.length = 0;
+        currentBeDOMNode.clear(resultBeDOMNode.hscript);
     };
 
     return {
