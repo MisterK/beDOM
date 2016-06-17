@@ -4,8 +4,7 @@
 - Add transFunctors:
     - Add class
     - Remove class
-- Add generic args-less trigger, which only take event.type as input
-    -> 'changes' is just a particular instance of it, returned as well on require()
+- Add more domEventTriggers => all dom events?
     -> Make addTransFunctors() accept an array
 - Add converters (similar to Angular filtering directives)
     -> How-to for DISPLAY_VALUE?

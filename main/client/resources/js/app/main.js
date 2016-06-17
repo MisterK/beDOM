@@ -3,10 +3,10 @@ var dataSources = require('./dataSources.js');
 
 //Register the triggers
 var triggers = require('./triggers.js');
-triggers.addTrigger(require('./triggers/changes.js'));
-triggers.addTrigger(require('./triggers/isEmpty.js'));
-triggers.addTrigger(require('./triggers/isNotEmpty.js'));
-triggers.addTrigger(require('./triggers/isLongerThan.js'));
+triggers.addTriggers(require('./triggers/domEventTriggers.js'));
+triggers.addTriggers(require('./triggers/isEmpty.js'));
+triggers.addTriggers(require('./triggers/isNotEmpty.js'));
+triggers.addTriggers(require('./triggers/isLongerThan.js'));
 
 //Register the transFunctors
 var transFunctors = require('./transFunctors.js');
