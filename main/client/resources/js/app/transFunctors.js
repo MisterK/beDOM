@@ -30,6 +30,13 @@ var addTransFunctor = function(transFunctor) {
     return registeredTransFunctors[transFunctor.name];
 };
 
+var addTransFunctors = function(transFunctors) {
+    if (!_.isArray(transFunctors)) {
+        transFunctors = [transFunctors];
+    }
+    _.each(transFunctors, addTransFunctor);
+};
+
 var getTransFunctorsByNameForArgs = function(name, actionArgs) {
     var registeredTransFunctor = registeredTransFunctors[name];
     if (_.isUndefined(registeredTransFunctor)) {
@@ -44,6 +51,6 @@ var getTransFunctorsByNameForArgs = function(name, actionArgs) {
 };
 
 module.exports = {
-    addTransFunctor: addTransFunctor,
+    addTransFunctors: addTransFunctors,
     getTransFunctorsByNameForArgs: getTransFunctorsByNameForArgs
 };

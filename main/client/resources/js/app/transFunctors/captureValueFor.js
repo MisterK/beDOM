@@ -5,10 +5,12 @@ module.exports = {
         var dataSourceName = actionArgs[0];
         if (!_.isString(dataSourceName)) {
             console.error('DataSourceName required as first argument');
+            return beDOMNode;
         }
         var fieldName = actionArgs[1];
         if (!_.isString(fieldName)) {
             console.error('FieldName required as first argument');
+            return beDOMNode;
         }
         console.log('    ==> executing transFunctor: "' + this.name
             + '", dataSourceName: "' + dataSourceName + '", fieldName: "' + fieldName + '"');

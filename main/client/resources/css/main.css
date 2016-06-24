@@ -1,0 +1,16 @@
+.firstClass {
+    color: orange;
+    background-color: green;
+}
+
+.secondClass {
+    font-style: italic;
+}
+
+.thirdClass {
+    text-decoration: underline;
+}
+
+.fourthClass {
+    font-weight: bold;
+}

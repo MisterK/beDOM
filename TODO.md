@@ -1,9 +1,8 @@
+== IN PROGRESS  ==
+
 == FEATURES ==
 - Natural language, by setting dynamic methods on thisTag from list of transFunctors + triggers
     - same for 'ELEMENT' => theTag('id').<triggerName>()
-- Add transFunctors:
-    - Add class
-    - Remove class
 - Add more domEventTriggers => all dom events?
     -> Make addTransFunctors() accept an array
 - Add converters (similar to Angular filtering directives)

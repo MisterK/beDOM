@@ -10,11 +10,10 @@ triggers.addTriggers(require('./triggers/isLongerThan.js'));
 
 //Register the transFunctors
 var transFunctors = require('./transFunctors.js');
-transFunctors.addTransFunctor(require('./transFunctors/captureValueFor.js'));
-transFunctors.addTransFunctor(require('./transFunctors/refreshValue.js'));
-transFunctors.addTransFunctor(require('./transFunctors/changeColorTo.js'));
-transFunctors.addTransFunctor(require('./transFunctors/changeBgColorTo.js'));
-transFunctors.addTransFunctor(require('./transFunctors/changeFontSizeTo.js'));
+transFunctors.addTransFunctors(require('./transFunctors/applyStyle.js'));
+transFunctors.addTransFunctors(require('./transFunctors/cssClasses.js'));
+transFunctors.addTransFunctors(require('./transFunctors/captureValueFor.js'));
+transFunctors.addTransFunctors(require('./transFunctors/refreshValue.js'));
 
 //Create the executionContext
 var executionContext = {

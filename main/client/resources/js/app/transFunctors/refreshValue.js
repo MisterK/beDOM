@@ -5,10 +5,12 @@ module.exports = {
         var newValue = actionArgs[0];
         if (_.isUndefined(newValue)) {
             console.error('newValue required as first argument');
+            return beDOMNode;
         }
         var oldValue = actionArgs[1];
         if (!_.isString(oldValue)) {
             console.error('oldValue required as second argument');
+            return beDOMNode;
         }
         console.log('    ==> executing transFunctor: "' + this.name
             + '", newValue: "' + newValue + '", oldValue: "' + oldValue + '"');
