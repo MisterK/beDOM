@@ -48,11 +48,7 @@ module.exports = function(executionContext, beDOMNodes, currentBeDOMNode) {
             //Apply changes to DOM
             patch(resultBeDOMNode.targetDOMNode[0], patches);
             //Persist data changes
-            console.log('=> ' + resultBeDOMNode.dataChanges.length + ' dataChange(s) to be applied');
-            _.each(resultBeDOMNode.dataChanges, function(dataChange) {
-                executionContext.dataSources.getDataSource(dataChange.dataSourceName)
-                    .setFieldValue(dataChange.fieldName, dataChange.newValue);
-            });
+            executionContext.dataSources.persistDataChanges(resultBeDOMNode.dataChanges);
             //Clean (Mutate) original node, as it's the new cycle
             targetBeDOMNode.clear(resultBeDOMNode.hscript);
         });
@@ -101,11 +97,7 @@ module.exports = function(executionContext, beDOMNodes, currentBeDOMNode) {
         //Apply changes to DOM
         patch(resultBeDOMNode.targetDOMNode[0], patches);
         //Persist data changes
-        console.log('=> ' + resultBeDOMNode.dataChanges.length + ' dataChange(s) to be applied');
-        _.each(resultBeDOMNode.dataChanges, function(dataChange) {
-            executionContext.dataSources.getDataSource(dataChange.dataSourceName)
-                .setFieldValue(dataChange.fieldName, dataChange.newValue);
-        });
+        executionContext.dataSources.persistDataChanges(resultBeDOMNode.dataChanges);
         //Clean (Mutate) original node, as it's the new cycle
         currentBeDOMNode.clear(resultBeDOMNode.hscript);
     };

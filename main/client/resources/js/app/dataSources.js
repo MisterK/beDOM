@@ -39,6 +39,15 @@ var getDataSource = function(name) {
     return dataSource;
 };
 
+var persistDataChanges = function(dataChanges) {
+    console.log('=> ' + dataChanges.length + ' dataChange(s) to be applied');
+    _.each(dataChanges, function(dataChange) {
+        getDataSource(dataChange.dataSourceName)
+            .setFieldValue(dataChange.fieldName, dataChange.newValue);
+    });
+};
+
 module.exports = {
-    getDataSource: getDataSource
+    getDataSource: getDataSource,
+    persistDataChanges: persistDataChanges
 };
