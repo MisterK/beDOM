@@ -2,14 +2,14 @@
 var dataSources = require('./dataSources.js');
 
 //Register the triggers
-var triggers = require('./triggers.js');
+var triggers = require('./triggers/triggers.js');
 triggers.addTriggers(require('./triggers/domEventTriggers.js'));
 triggers.addTriggers(require('./triggers/isEmpty.js'));
 triggers.addTriggers(require('./triggers/isNotEmpty.js'));
 triggers.addTriggers(require('./triggers/isLongerThan.js'));
 
 //Register the transFunctors
-var transFunctors = require('./transFunctors.js');
+var transFunctors = require('./transFunctors/transFunctors.js');
 transFunctors.addTransFunctors(require('./transFunctors/applyStyle.js'));
 transFunctors.addTransFunctors(require('./transFunctors/cssClasses.js'));
 transFunctors.addTransFunctors(require('./transFunctors/captureValueFor.js'));
