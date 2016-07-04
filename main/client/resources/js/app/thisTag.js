@@ -1,106 +1,48 @@
+var domEventListener = require('./listeners/domEventListener.js');
+var dataSourceEventListener = require('./listeners/dataSourceEventListener.js');
+
 var diff = require('virtual-dom/diff');
 var patch = require('virtual-dom/patch');
 
-module.exports = function(executionContext, beDOMNodes, currentBeDOMNode) {
-    var registeredActionCallbacks = [];
-
-    var bindEventOnBeDOMNode = function(event) { //TODO move to other module
-        var eventTargetBeDOMNode = event.data;
-        if (_.isUndefined(eventTargetBeDOMNode)) {
-            console.error('Could not find related beDOMNode when receiving event on DOM node');
-            return this;
-        }
-	    console.log('============== Event =======================');
-        console.log('Event "' + event.type + '" triggered on BeDOMNode "' + eventTargetBeDOMNode.targetTagId + '"');
-        _(eventTargetBeDOMNode.triggerContexts).filter(function(triggerContext) {
-            return triggerContext.trigger.bindingEvent == event.type; //Retrieve the trigger contexts for the given event
-        }).filter(function(triggerContext) {
-            return triggerContext.trigger.triggerFunction(
-                eventTargetBeDOMNode.targetDOMNode, triggerContext.triggerArguments); //Keep the ones that were activated
-        }).groupBy(function(triggerContext) {
-            return triggerContext.targetBeDOMNode.targetTagId;
-        }).values().each(function (triggerContextsForBeDOMElement) {
-            var targetBeDOMNode = triggerContextsForBeDOMElement[0].targetBeDOMNode;
-            console.log('  => ' + triggerContextsForBeDOMElement.length + ' triggerContext(s) found for BeDOMNode "'
-                + targetBeDOMNode.targetTagId+ '"');
-            //Get all transfunctors for all activated triggerContexts
-            var transFunctors = _(triggerContextsForBeDOMElement).map(function(triggerContextForBeDOMElement) {
-                return _.map(triggerContextForBeDOMElement.actionCallbacks, function(actionCallback) {
-                    return actionCallback.transFunctors;
-                });
-            }).flatten().value();
-            console.log('  => ' + transFunctors.length + ' transFunctor(s) found for BeDOMNode "'
-                + targetBeDOMNode.targetTagId + '"');
-            //Compose all transFunctors into one
-            var reducedTransfunctors = transFunctors[0].composeTransFunctors(transFunctors);
-            //Execute composed transFunction
-            var resultBeDOMNode = reducedTransfunctors.transFunction('blah', targetBeDOMNode); //TODO what should be the input?
-            //Calculate resulting diffs between original hscript and resulting hscript
-            var patches = diff(targetBeDOMNode.hscript, resultBeDOMNode.hscript);
-            if (_.isObject(patches[0])) {
-                console.log('=> DOM patches to be applied on BeDOMNode "' + targetBeDOMNode.targetTagId + '"');
-            } else {
-                console.log('=> No DOM patches to be applied on BeDOMNode "' + targetBeDOMNode.targetTagId + '"');
-            }
-
-            //TODO Later: _.map and return targetDOMNode with patches to apply, and dataChanges, and let the calling code do the execution
-            //TODO Later: Part with side-effect, move this to Monet.IO
-            //Apply changes to DOM
-            patch(resultBeDOMNode.targetDOMNode[0], patches);
-            //Persist data changes
-            executionContext.dataSources.persistDataChanges(resultBeDOMNode.dataChanges);
-            //Clean (Mutate) original node, as it's the new cycle
-            targetBeDOMNode.clear(resultBeDOMNode.hscript);
-        });
-    };
-
-    var registerListenerOnDataSourceField = function(dataSourceName, fieldName, newValue, oldValue) { //TODO move to other module
-        console.log('============== DataSource Listener =======================');
-        console.log('Listener triggered on dataSource "'
-            + dataSourceName + '" and field "' + fieldName
-            + '" for BeDOMNode "' + currentBeDOMNode.targetTagId + '"');
-
-        //Get all transfunctors for all dataSourceListenerContexts
-        var transFunctors = _(currentBeDOMNode.dataSourceListenerContexts)
-            .filter(function(dataSourceListenerContext) {
-                return dataSourceListenerContext.dataSourceName == dataSourceName
-                    && dataSourceListenerContext.fieldName == fieldName; //Retrieve the listener contexts for the given data source and field
-            }).map(function(dataSourceListenerContext) {
-                return _.map(dataSourceListenerContext.actionCallbacks, function(actionCallback) {
-                    return actionCallback.transFunctors;
-                });
-            }).flatten().map(function(transFunctor) {
-                if (transFunctor.name == 'REFRESH_VALUE') {
-                    return executionContext.transFunctors.getTransFunctorsByNameForArgs(
-                        'REFRESH_VALUE', [newValue, oldValue]);
-                } else {
-                    return transFunctor;
-                }
-            }).value();
-
-        console.log('  => ' + transFunctors.length + ' transFunctor(s) found for BeDOMNode "'
-            + currentBeDOMNode.targetTagId + '"');
-        //Compose all transFunctors into one
-        var reducedTransfunctors = transFunctors[0].composeTransFunctors(transFunctors);
-        //Execute composed transFunction
-        var resultBeDOMNode = reducedTransfunctors.transFunction('blah', currentBeDOMNode); //TODO what should be the input?
+var applyTransformation = function(executionContext) {
+    return function (transformation) {
         //Calculate resulting diffs between original hscript and resulting hscript
-        var patches = diff(currentBeDOMNode.hscript, resultBeDOMNode.hscript);
+        var patches = diff(transformation.targetBeDOMNode.hscript, transformation.resultingHScript);
         if (_.isObject(patches[0])) {
-            console.log('=> DOM patches to be applied');
+            console.log('=> DOM patches to be applied on BeDOMNode "'
+                + transformation.targetBeDOMNode.targetTagId + '"');
         } else {
-            console.log('=> No DOM patches to be applied');
+            console.log('=> No DOM patches to be applied on BeDOMNode "'
+                + transformation.targetBeDOMNode.targetTagId + '"');
         }
 
-        //TODO Later: return targetDOMNode with patches to apply, and dataChanges, and let the calling code do the execution
         //TODO Later: Part with side-effect, move this to Monet.IO
         //Apply changes to DOM
-        patch(resultBeDOMNode.targetDOMNode[0], patches);
-        //Persist data changes
-        executionContext.dataSources.persistDataChanges(resultBeDOMNode.dataChanges);
+        patch(transformation.targetBeDOMNode.targetDOMNode[0], patches);
         //Clean (Mutate) original node, as it's the new cycle
-        currentBeDOMNode.clear(resultBeDOMNode.hscript);
+        transformation.targetBeDOMNode.clear(transformation.resultingHScript);
+        //Persist data changes
+        executionContext.dataSources.persistDataChanges(transformation.dataChanges);
     };
+};
+
+var bindEventOnBeDOMNode = function(executionContext) {
+    return function(event) {
+        _(domEventListener.getTransformationsForDOMEvent(event))
+            .each(applyTransformation(executionContext));
+    };
+};
+
+var registerListenerOnDataSourceField = function(executionContext, currentBeDOMNode) {
+    return function(dataSourceName, fieldName, newValue, oldValue) {
+        applyTransformation(executionContext)(
+            dataSourceEventListener.getTransformationsForDataSourceEvent(
+                executionContext, currentBeDOMNode, dataSourceName, fieldName, newValue, oldValue));
+    };
+};
+
+module.exports = function(executionContext, beDOMNodes, currentBeDOMNode) {
+    var registeredActionCallbacks = [];
 
     return {
         do: function(actionName, actionArgs) {
@@ -142,7 +84,8 @@ module.exports = function(executionContext, beDOMNodes, currentBeDOMNode) {
                     }))) {
                     //Bind listener function to current node
                     executionContext.dataSources.getDataSource(dataSourceName)
-                        .registerFieldListener(fieldName, registerListenerOnDataSourceField);
+                        .registerFieldListener(fieldName,
+                            registerListenerOnDataSourceField(executionContext, targetBeDOMNode));
                     console.log('=> Registered listener on dataSource "'
                         + dataSourceName + '" and field "' + fieldName + '"');
                 }
@@ -180,7 +123,8 @@ module.exports = function(executionContext, beDOMNodes, currentBeDOMNode) {
                         return triggerContext.trigger.bindingEvent == targetTrigger.bindingEvent;
                     }))) {
                     //Bind listener function to current node
-                    targetBeDOMNode.targetDOMNode.on(targetTrigger.bindingEvent, targetBeDOMNode, bindEventOnBeDOMNode);
+                    targetBeDOMNode.targetDOMNode.on(targetTrigger.bindingEvent, targetBeDOMNode,
+                        bindEventOnBeDOMNode(executionContext));
                     console.log('=> Bound event "' + targetTrigger.bindingEvent
                         + '" on target BeDOMNode "' + targetBeDOMNode.targetTagId + '"');
                 }

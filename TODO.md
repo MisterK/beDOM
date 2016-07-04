@@ -9,9 +9,7 @@
 - andRevertOtherwise()
 
 == IMPROVEMENTS ==
-- Move bindEventOnBeDOMNode and registerListenerOnDataSourceField to other module
-- Make bindEventOnBeDOMNode and registerListenerOnDataSourceField return list of changes,
-    and do IO in the execution (using Monet.IO?)
+- Encapsulate IO/Mutability in the execution (using Monet.IO?)
 - Add clearWithNewHScript() on BeDOMNode
 - Add dbListenerFn on some triggers (e.g. changes)
 - Try to compact triggerContexts for same trigger and DBListeners for same field at the end of binding phase, rather than on event?
@@ -24,6 +22,7 @@
 - When to refresh beDOMNode's hscript?
     re-evaluate when event occurs
     or listen to all events on dom?
+
 == TODO ==
 - Test more complex composition
 
