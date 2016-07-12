@@ -12,7 +12,7 @@ module.exports = {
             console.error('FieldName required as first argument');
             return beDOMNode;
         }
-        console.log('    ==> executing transFunctor: "' + this.name
+        console.log('      ==> executing transFunctor: "' + this.name
             + '", dataSourceName: "' + dataSourceName + '", fieldName: "' + fieldName + '"');
 
         return beDOMNode.addDataChange({

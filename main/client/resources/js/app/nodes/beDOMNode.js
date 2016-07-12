@@ -5,7 +5,7 @@ var beDOMNode = function(targetTagId, targetDOMNode, hscript, commands) {
     this.targetDOMNode = targetDOMNode;
     this.hscript = hscript;
     this.commands = commands;
-    this.triggerContexts = [];
+    this.domEventTriggerContexts = [];
     this.dataSourceListenerContexts = [];
     this.dataChanges = [];
 };

@@ -12,7 +12,7 @@ module.exports = {
             console.error('oldValue required as second argument');
             return beDOMNode;
         }
-        console.log('    ==> executing transFunctor: "' + this.name
+        console.log('      ==> executing transFunctor: "' + this.name
             + '", newValue: "' + newValue + '", oldValue: "' + oldValue + '"');
 
         //TODO Bug: This is not working, create VText instead?

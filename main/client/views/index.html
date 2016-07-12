@@ -6,7 +6,7 @@
         <link href="resources/css/main.css" rel="stylesheet"/>
     </head>
     <body>
-        Input: <input type="text" id="inputField" />
+        Input: <input type="text" id="inputField" autocomplete="off" spellcheck="false" />
                 <script language="BeDOM" forTag="inputField">
                     //Example of chained declarations for same event
                     thisTag.do('ADD_CLASS', ['firstClass', 'thirdClass']).do('APPLY_STYLE', [{ "font-size": "16px" }]).when('IS_NOT_EMPTY');
@@ -19,7 +19,7 @@
                     thisTag.do('APPLY_STYLE', [{ "font-size": "14px" }]).when('ELEMENT', ['inputField2', 'IS_LONGER_THAN', [4]]);
                 </script>
         <br />
-        Other input:  <input type="text" id="inputField2" />
+        Other input:  <input type="text" id="inputField2" autocomplete="off" spellcheck="false" />
                     <script language="BeDOM" forTag="inputField2">
                         //Example of value capture
                         thisTag.do('CAPTURE_VALUE_FOR', ['form', '/field1/field2']).when('CHANGES');

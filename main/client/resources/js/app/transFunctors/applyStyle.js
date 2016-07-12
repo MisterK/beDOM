@@ -6,7 +6,7 @@ module.exports = {
             console.error('Style object required as first argument');
             return beDOMNode;
         }
-        console.log('    ==> executing transFunctor: "' + this.name + '", targetStyle: "' + targetStyle + '"');
+        console.log('      ==> executing transFunctor: "' + this.name + '", targetStyle: "' + targetStyle + '"');
 
         var newHScript = beDOMNode.cloneHScript();
         if (!newHScript.properties.style) {

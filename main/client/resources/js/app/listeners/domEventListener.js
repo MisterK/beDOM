@@ -1,12 +1,12 @@
 var triggerContextsForDOMEventType = function(eventType) {
     return function(triggerContext) {
-        return triggerContext.trigger.bindingEvent == eventType;
+        return triggerContext.trigger.triggerEventName == eventType;
     }
 };
 
 var activatedTriggerContexts = function(eventTargetBeDOMNode) {
     return function(triggerContext) {
-        return triggerContext.trigger.triggerFunction(
+        return triggerContext.trigger.domTriggerFunction(
             eventTargetBeDOMNode.targetDOMNode, triggerContext.triggerArguments);
     };
 };
@@ -21,12 +21,12 @@ var getTransformationsForDOMEvent = function(event) {
     var eventTargetBeDOMNode = event.data;
     if (_.isUndefined(eventTargetBeDOMNode)) {
         console.error('Could not find related beDOMNode when receiving event on DOM node');
-        return this;
+        return [];
     }
     console.log('============== Event =======================');
     console.log('Event "' + event.type + '" triggered on BeDOMNode "' + eventTargetBeDOMNode.targetTagId + '"');
 
-    return _(eventTargetBeDOMNode.triggerContexts)
+    return _(eventTargetBeDOMNode.domEventTriggerContexts)
         .filter(triggerContextsForDOMEventType(event.type))
         .filter(activatedTriggerContexts(eventTargetBeDOMNode))
         .groupBy(function(triggerContext) { return triggerContext.targetBeDOMNode.targetTagId; })
@@ -38,8 +38,15 @@ var getTransformationsForDOMEvent = function(event) {
 
             var transFunctors = _(triggerContextsForBeDOMElement)
                 .map(transfunctorsForTriggerContext).flatten().value();
-            console.log('  => ' + transFunctors.length + ' transFunctor(s) found for BeDOMNode "'
+            console.log('    => ' + transFunctors.length + ' transFunctor(s) found for BeDOMNode "'
                 + targetBeDOMNode.targetTagId + '"');
+            if (transFunctors.length == 0) { //TODO Minor: return Absent => flatten
+                return {
+                    targetBeDOMNode: targetBeDOMNode,
+                    resultingHScript: targetBeDOMNode.hscript,
+                    dataChanges: targetBeDOMNode.dataChanges
+                };
+            }
 
             //Compose all transFunctors into one
             var reducedTransfunctors = transFunctors[0].composeTransFunctors(transFunctors);

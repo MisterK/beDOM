@@ -1,5 +1,6 @@
 var domEventListener = require('./listeners/domEventListener.js');
 var dataSourceEventListener = require('./listeners/dataSourceEventListener.js');
+var ListenerContext = require('./listeners/listenerContext.js');
 
 var diff = require('virtual-dom/diff');
 var patch = require('virtual-dom/patch');
@@ -12,7 +13,7 @@ var applyTransformation = function(executionContext) {
             console.log('=> DOM patches to be applied on BeDOMNode "'
                 + transformation.targetBeDOMNode.targetTagId + '"');
         } else {
-            console.log('=> No DOM patches to be applied on BeDOMNode "'
+            console.log('=> **No** DOM patches to be applied on BeDOMNode "'
                 + transformation.targetBeDOMNode.targetTagId + '"');
         }
 
@@ -60,6 +61,7 @@ module.exports = function(executionContext, beDOMNodes, currentBeDOMNode) {
             var targetBeDOMNode = currentBeDOMNode;
             var triggerAction = triggerName;
             var triggerArguments = triggerArgs || [];
+            var targetTrigger;
             //If trigger is on dataSource
             if (triggerName == 'DATA_SOURCE') {
                 var dataSourceName = triggerArgs[0];
@@ -72,15 +74,18 @@ module.exports = function(executionContext, beDOMNodes, currentBeDOMNode) {
                     console.error('FieldName required as first argument');
                     return this;
                 }
-                if (triggerArgs[2] != 'CHANGES') { //TODO Later: other types of triggers on dataSources
-                    console.error('Unknown trigger "' + triggerArgs[2] + "' for dataSource");
+                triggerAction = triggerArgs[2];
+                triggerArguments = triggerArgs[3] || [];
+                targetTrigger = executionContext.triggers.getTriggerByName(triggerAction);
+                if (_.isUndefined(targetTrigger)) {
+                    console.error('No triggers registered for this trigger name ' + triggerAction);
                     return this;
                 }
                 //If listener has never been register on dataSource for field before for current node
                 if (_.isUndefined(_.find(targetBeDOMNode.dataSourceListenerContexts,
                         function(dataSourceListenerContext) {
-                            return dataSourceListenerContext.dataSourceName == dataSourceName
-                                && dataSourceListenerContext.fieldName == fieldName;
+                            return dataSourceListenerContext.triggerContext.dataSourceName == dataSourceName
+                                && dataSourceListenerContext.triggerContext.fieldName == fieldName;
                     }))) {
                     //Bind listener function to current node
                     executionContext.dataSources.getDataSource(dataSourceName)
@@ -90,11 +95,10 @@ module.exports = function(executionContext, beDOMNodes, currentBeDOMNode) {
                         + dataSourceName + '" and field "' + fieldName + '"');
                 }
                 //Register current action callbacks to BeDOMNode for dataSource listener
-                targetBeDOMNode.dataSourceListenerContexts.push({
-                    dataSourceName: dataSourceName,
-                    fieldName: fieldName,
-                    actionCallbacks: _.clone(registeredActionCallbacks)
-                });
+                targetBeDOMNode.dataSourceListenerContexts.push(
+                    new ListenerContext(targetTrigger,
+                        { dataSourceName: dataSourceName, fieldName: fieldName },
+                        triggerArguments, currentBeDOMNode, _.clone(registeredActionCallbacks)));
                 console.log('=> Registered ' + registeredActionCallbacks.length + ' callbacks for BeDOMNode "'
                     + currentBeDOMNode.targetTagId + '", for dataSource "'
                     + dataSourceName + '" and field "' + fieldName + '"');
@@ -113,28 +117,25 @@ module.exports = function(executionContext, beDOMNodes, currentBeDOMNode) {
                     triggerAction = triggerArgs[1];
                     triggerArguments = triggerArgs[2] || [];
                 }
-                var targetTrigger = executionContext.triggers.getTriggerByName(triggerAction);
+                targetTrigger = executionContext.triggers.getTriggerByName(triggerAction);
                 if (_.isUndefined(targetTrigger)) {
                     console.error('No triggers registered for this trigger name ' + triggerAction);
                     return this;
                 }
                 //If event has never been bound before for current node
-                if (_.isUndefined(_.find(targetBeDOMNode.triggerContexts, function(triggerContext) {
-                        return triggerContext.trigger.bindingEvent == targetTrigger.bindingEvent;
+                if (_.isUndefined(_.find(targetBeDOMNode.domEventTriggerContexts, function(triggerContext) {
+                        return triggerContext.trigger.triggerEventName == targetTrigger.triggerEventName;
                     }))) {
                     //Bind listener function to current node
-                    targetBeDOMNode.targetDOMNode.on(targetTrigger.bindingEvent, targetBeDOMNode,
+                    targetBeDOMNode.targetDOMNode.on(targetTrigger.triggerEventName, targetBeDOMNode,
                         bindEventOnBeDOMNode(executionContext));
-                    console.log('=> Bound event "' + targetTrigger.bindingEvent
+                    console.log('=> Bound event "' + targetTrigger.triggerEventName
                         + '" on target BeDOMNode "' + targetBeDOMNode.targetTagId + '"');
                 }
                 //Register current action callbacks to BeDOMNode for trigger
-                targetBeDOMNode.triggerContexts.push({
-                    trigger: targetTrigger,
-                    triggerArguments: triggerArguments,
-                    targetBeDOMNode: currentBeDOMNode,
-                    actionCallbacks: _.clone(registeredActionCallbacks)
-                });
+                targetBeDOMNode.domEventTriggerContexts.push(
+                    new ListenerContext(
+                        targetTrigger, {}, triggerArguments, currentBeDOMNode, _.clone(registeredActionCallbacks)));
                 console.log('=> Registered ' + registeredActionCallbacks.length + ' actionCallbacks for BeDOMNode "'
                     + currentBeDOMNode.targetTagId + '", for trigger "'
                     + triggerAction + '" on target BeDOMNode "' + targetBeDOMNode.targetTagId + '"');

@@ -25,7 +25,7 @@ var classTransfunctor = function(transFunctorName, transFunction) {
                 console.error('CSS class names required as arguments');
                 return beDOMNode;
             }
-            console.log('    ==> executing transFunctor: "' + this.name
+            console.log('      ==> executing transFunctor: "' + this.name
                 + '", targetClasses: ["' + actionArgs.join('", "') + '"]');
 
             var newHScript = beDOMNode.cloneHScript();
