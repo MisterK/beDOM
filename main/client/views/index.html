@@ -28,7 +28,7 @@
         Output: Hello <span id="outputField">blah</span>
                 <script language="BeDOM" forTag="outputField">
                     //Example of value display
-                    thisTag.do('REFRESH_VALUE').do('TOGGLE_CLASS', ['secondClass']).when('DATA_SOURCE', ['form', '/field1/field2', 'CHANGES']);
+                    thisTag.do('REFRESH_VALUE').do('TOGGLE_CLASS', ['secondClass']).whenDataSourceField(['form', '/field1/field2'], 'CHANGES');
                 </script>
         <div id="errorMessage" style="display: none;">ERROR</div>
         <script language="TODO" forTag="errorMessage">

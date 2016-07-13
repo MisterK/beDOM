@@ -1,4 +1,5 @@
 == IN PROGRESS  ==
+- Split thisTag's when() between when(), whenElement() and whenDataSource()
 
 == FEATURES ==
 - Natural language, by setting dynamic methods on thisTag from list of transFunctors + triggers
@@ -9,7 +10,6 @@
 - andRevertOtherwise()
 
 == IMPROVEMENTS ==
-- Split thisTag's when() between when(), whenElement() and whenDataSource()
 - Encapsulate IO/Mutability in the execution (using Monet.IO?)
 - Add clearWithNewHScript() on BeDOMNode
 - Try to compact triggerContexts for same trigger and DBListeners for same field at the end of binding phase, rather than on event?
@@ -19,6 +19,7 @@
 - Handle reference to non-BeDOMNode, which can then become one
 - thisTag should be pure (map array of BeDOMNodes)
     => no more mutations on BeDOMNode's domEventTriggerContexts and dataSourceListenerContexts
+- forTag could be a CSS selector, potentially re-run on event triggering (-> transform found DOM elements to beDOMElements on the fly)
 - When to refresh beDOMNode's hscript?
     re-evaluate when event occurs
     or listen to all events on dom?

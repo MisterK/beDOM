@@ -61,85 +61,87 @@ module.exports = function(executionContext, beDOMNodes, currentBeDOMNode) {
             var targetBeDOMNode = currentBeDOMNode;
             var triggerAction = triggerName;
             var triggerArguments = triggerArgs || [];
-            var targetTrigger;
-            //If trigger is on dataSource
-            if (triggerName == 'DATA_SOURCE') {
-                var dataSourceName = triggerArgs[0];
-                if (!_.isString(dataSourceName)) {
-                    console.error('DataSourceName required as first argument');
+            //If trigger is on another element
+            if (triggerName == 'ELEMENT') {
+                var targetTagId = triggerArgs[0];
+                targetBeDOMNode = _.find(beDOMNodes, function(beDOMNode) {
+                    return beDOMNode.targetTagId == targetTagId;
+                });
+                if (_.isUndefined(targetBeDOMNode)) {
+                    //TODO handle DOMNode by itself, without having to transform it into a beDOMNode
+                    console.error('Could not find target beDOMNode of id ' + targetTagId);
                     return this;
                 }
-                var fieldName = triggerArgs[1];
-                if (!_.isString(fieldName)) {
-                    console.error('FieldName required as first argument');
-                    return this;
-                }
-                triggerAction = triggerArgs[2];
-                triggerArguments = triggerArgs[3] || [];
-                targetTrigger = executionContext.triggers.getTriggerByName(triggerAction);
-                if (_.isUndefined(targetTrigger)) {
-                    console.error('No triggers registered for this trigger name ' + triggerAction);
-                    return this;
-                }
-                //If listener has never been register on dataSource for field before for current node
-                if (_.isUndefined(_.find(targetBeDOMNode.dataSourceListenerContexts,
-                        function(dataSourceListenerContext) {
-                            return dataSourceListenerContext.triggerContext.dataSourceName == dataSourceName
-                                && dataSourceListenerContext.triggerContext.fieldName == fieldName;
-                    }))) {
-                    //Bind listener function to current node
-                    executionContext.dataSources.getDataSource(dataSourceName)
-                        .registerFieldListener(fieldName,
-                            registerListenerOnDataSourceField(executionContext, targetBeDOMNode));
-                    console.log('=> Registered listener on dataSource "'
-                        + dataSourceName + '" and field "' + fieldName + '"');
-                }
-                //Register current action callbacks to BeDOMNode for dataSource listener
-                targetBeDOMNode.dataSourceListenerContexts.push(
-                    new ListenerContext(targetTrigger,
-                        { dataSourceName: dataSourceName, fieldName: fieldName },
-                        triggerArguments, currentBeDOMNode, _.clone(registeredActionCallbacks)));
-                console.log('=> Registered ' + registeredActionCallbacks.length + ' callbacks for BeDOMNode "'
-                    + currentBeDOMNode.targetTagId + '", for dataSource "'
-                    + dataSourceName + '" and field "' + fieldName + '"');
-            } else {
-                //If trigger is on another element
-                if (triggerName == 'ELEMENT') {
-                    var targetTagId = triggerArgs[0];
-                    targetBeDOMNode = _.find(beDOMNodes, function(beDOMNode) {
-                        return beDOMNode.targetTagId == targetTagId;
-                    });
-                    if (_.isUndefined(targetBeDOMNode)) {
-                        //TODO handle DOMNode by itself, without having to transform it into a beDOMNode
-                        console.error('Could not find target beDOMNode of id ' + targetTagId);
-                        return this;
-                    }
-                    triggerAction = triggerArgs[1];
-                    triggerArguments = triggerArgs[2] || [];
-                }
-                targetTrigger = executionContext.triggers.getTriggerByName(triggerAction);
-                if (_.isUndefined(targetTrigger)) {
-                    console.error('No triggers registered for this trigger name ' + triggerAction);
-                    return this;
-                }
-                //If event has never been bound before for current node
-                if (_.isUndefined(_.find(targetBeDOMNode.domEventTriggerContexts, function(triggerContext) {
-                        return triggerContext.trigger.triggerEventName == targetTrigger.triggerEventName;
-                    }))) {
-                    //Bind listener function to current node
-                    targetBeDOMNode.targetDOMNode.on(targetTrigger.triggerEventName, targetBeDOMNode,
-                        bindEventOnBeDOMNode(executionContext));
-                    console.log('=> Bound event "' + targetTrigger.triggerEventName
-                        + '" on target BeDOMNode "' + targetBeDOMNode.targetTagId + '"');
-                }
-                //Register current action callbacks to BeDOMNode for trigger
-                targetBeDOMNode.domEventTriggerContexts.push(
-                    new ListenerContext(
-                        targetTrigger, {}, triggerArguments, currentBeDOMNode, _.clone(registeredActionCallbacks)));
-                console.log('=> Registered ' + registeredActionCallbacks.length + ' actionCallbacks for BeDOMNode "'
-                    + currentBeDOMNode.targetTagId + '", for trigger "'
-                    + triggerAction + '" on target BeDOMNode "' + targetBeDOMNode.targetTagId + '"');
+                triggerAction = triggerArgs[1];
+                triggerArguments = triggerArgs[2] || [];
             }
+            var targetTrigger = executionContext.triggers.getTriggerByName(triggerAction);
+            if (_.isUndefined(targetTrigger)) {
+                console.error('No triggers registered for this trigger name ' + triggerAction);
+                return this;
+            }
+            //If event has never been bound before for current node
+            if (_.isUndefined(_.find(targetBeDOMNode.domEventTriggerContexts, function(triggerContext) {
+                    return triggerContext.trigger.triggerEventName == targetTrigger.triggerEventName;
+                }))) {
+                //Bind listener function to current node
+                targetBeDOMNode.targetDOMNode.on(targetTrigger.triggerEventName, targetBeDOMNode,
+                    bindEventOnBeDOMNode(executionContext));
+                console.log('=> Bound event "' + targetTrigger.triggerEventName
+                    + '" on target BeDOMNode "' + targetBeDOMNode.targetTagId + '"');
+            }
+            //Register current action callbacks to BeDOMNode for trigger
+            targetBeDOMNode.domEventTriggerContexts.push(
+                new ListenerContext(
+                    targetTrigger, {}, triggerArguments, currentBeDOMNode, _.clone(registeredActionCallbacks)));
+            console.log('=> Registered ' + registeredActionCallbacks.length + ' actionCallbacks for BeDOMNode "'
+                + currentBeDOMNode.targetTagId + '", for trigger "'
+                + triggerAction + '" on target BeDOMNode "' + targetBeDOMNode.targetTagId + '"');
+
+            //Clean state
+            registeredActionCallbacks.length = 0;
+            return this;
+        },
+        whenDataSourceField: function(dataSourceFieldArgs, triggerName, triggerArgs) {
+            var targetBeDOMNode = currentBeDOMNode;
+            var dataSourceName = dataSourceFieldArgs[0];
+            if (!_.isString(dataSourceName)) {
+                console.error('DataSourceName required as first argument');
+                return this;
+            }
+            var fieldName = dataSourceFieldArgs[1];
+            if (!_.isString(fieldName)) {
+                console.error('FieldName required as first argument');
+                return this;
+            }
+            var triggerAction = triggerName;
+            var triggerArguments = triggerArgs || [];
+            var targetTrigger = executionContext.triggers.getTriggerByName(triggerAction);
+            if (_.isUndefined(targetTrigger)) {
+                console.error('No triggers registered for this trigger name ' + triggerAction);
+                return this;
+            }
+            //If listener has never been registered on dataSource for field before for current node
+            if (_.isUndefined(_.find(targetBeDOMNode.dataSourceListenerContexts,
+                    function(dataSourceListenerContext) {
+                        return dataSourceListenerContext.triggerContext.dataSourceName == dataSourceName
+                            && dataSourceListenerContext.triggerContext.fieldName == fieldName;
+                    }))) {
+                //Bind listener function to current node
+                executionContext.dataSources.getDataSource(dataSourceName)
+                    .registerFieldListener(fieldName,
+                        registerListenerOnDataSourceField(executionContext, targetBeDOMNode));
+                console.log('=> Registered listener on dataSource "'
+                    + dataSourceName + '" and field "' + fieldName + '"');
+            }
+            //Register current action callbacks to BeDOMNode for dataSource listener
+            targetBeDOMNode.dataSourceListenerContexts.push(
+                new ListenerContext(targetTrigger,
+                    { dataSourceName: dataSourceName, fieldName: fieldName },
+                    triggerArguments, currentBeDOMNode, _.clone(registeredActionCallbacks)));
+            console.log('=> Registered ' + registeredActionCallbacks.length + ' callbacks for BeDOMNode "'
+                + currentBeDOMNode.targetTagId + '", for dataSource "'
+                + dataSourceName + '" and field "' + fieldName + '"');
 
             //Clean state
             registeredActionCallbacks.length = 0;

@@ -37,7 +37,6 @@ var getTransformationsForDataSourceEvent = function(executionContext, currentBeD
         + dataSourceName + '" and field "' + fieldName
         + '" for BeDOMNode "' + currentBeDOMNode.targetTagId + '"');
 
-    //Get all transfunctors for all dataSourceListenerContexts
     var transFunctors = _(currentBeDOMNode.dataSourceListenerContexts)
         .filter(listenerContextsForDataSourceField(dataSourceName, fieldName))
         .filter(activatedDataSourceListenerContexts(currentBeDOMNode, newValue, oldValue))
