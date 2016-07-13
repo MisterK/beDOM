@@ -1,5 +1,4 @@
 == IN PROGRESS  ==
-- Split thisTag's when() between when(), whenElement() and whenDataSource()
 
 == FEATURES ==
 - Natural language, by setting dynamic methods on thisTag from list of transFunctors + triggers

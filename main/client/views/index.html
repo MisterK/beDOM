@@ -9,20 +9,20 @@
         Input: <input type="text" id="inputField" autocomplete="off" spellcheck="false" />
                 <script language="BeDOM" forTag="inputField">
                     //Example of chained declarations for same event
-                    thisTag.do('ADD_CLASS', ['firstClass', 'thirdClass']).do('APPLY_STYLE', [{ "font-size": "16px" }]).when('IS_NOT_EMPTY');
+                    thisTag.do('ADD_CLASS', ['firstClass', 'thirdClass']).do('APPLY_STYLE', [{ "font-size": "16px" }]).whenIt('IS_NOT_EMPTY');
 
                     //Example of subsequent transformations for same event
-                    thisTag.do('REMOVE_CLASS', ['firstClass']).when('IS_EMPTY');
-                    thisTag.do('REMOVE_CLASS', ['thirdClass']).when('IS_EMPTY');
+                    thisTag.do('REMOVE_CLASS', ['firstClass']).whenIt('IS_EMPTY');
+                    thisTag.do('REMOVE_CLASS', ['thirdClass']).whenIt('IS_EMPTY');
 
                     //Example of watching a different field
-                    thisTag.do('APPLY_STYLE', [{ "font-size": "14px" }]).when('ELEMENT', ['inputField2', 'IS_LONGER_THAN', [4]]);
+                    thisTag.do('APPLY_STYLE', [{ "font-size": "14px" }]).whenTheTag('inputField2', 'IS_LONGER_THAN', [4]);
                 </script>
         <br />
         Other input:  <input type="text" id="inputField2" autocomplete="off" spellcheck="false" />
                     <script language="BeDOM" forTag="inputField2">
                         //Example of value capture
-                        thisTag.do('CAPTURE_VALUE_FOR', ['form', '/field1/field2']).when('CHANGES');
+                        thisTag.do('CAPTURE_VALUE_FOR', ['form', '/field1/field2']).whenIt('CHANGES');
                     </script>
         <br />
         Output: Hello <span id="outputField">blah</span>
@@ -33,19 +33,19 @@
         <div id="errorMessage" style="display: none;">ERROR</div>
         <script language="TODO" forTag="errorMessage">
             //TODO: field status integration
-            thisTag.do('SHOW').do('ADD_CLASS', ['fourthClass']).when('ELEMENT', ['inputField', 'CHANGE_STATUS_TO', ['invalid']]).andRevertOtherwise();
+            thisTag.do('SHOW').do('ADD_CLASS', ['fourthClass']).whenTheTag('inputField', 'CHANGE_STATUS_TO', ['invalid']).andRevertOtherwise();
         </script>
 
         <br/>
         <script language="BeDOM" forTag="inputField">
             //Example of delayed declaration
-            thisTag.do('REMOVE_CLASS', ['thirdClass']).when('IS_LONGER_THAN', [3]);
+            thisTag.do('REMOVE_CLASS', ['thirdClass']).whenIt('IS_LONGER_THAN', [3]);
         </script>
 
         TODO:
         <script language="TODO" forTag="inputField">
             //TODO: Revert otherwise
-            thisTag.do('CHANGE_STATUS_TO',['invalid']).when('IS_EMPTY').andRevertOtherwise();
+            thisTag.do('CHANGE_STATUS_TO',['invalid']).whenIt('IS_EMPTY').andRevertOtherwise();
         </script>
 
 
