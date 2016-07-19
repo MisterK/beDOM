@@ -1,6 +1,6 @@
 var dom2hscript = require('dom2hscript');
 var h = require('virtual-dom/h');
-var beDOMNode = require('./nodes/beDOMNode');
+var BeDOMNode = require('./nodes/beDOMNode');
 
 var parse = function () {
     var beDOMNodes = [];
@@ -37,7 +37,7 @@ var parse = function () {
             return; //TODO Minor: use Maybe instead, if reducing
         }
 
-        beDOMNodes.push(new beDOMNode(targetTagId, targetDOMNode, hscript, nodeText));
+        beDOMNodes.push(new BeDOMNode(targetTagId, targetDOMNode, hscript, nodeText));
     });
 
     console.log("Found " + beDOMNodes.length + " beDOMNode(s)");

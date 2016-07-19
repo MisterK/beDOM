@@ -2,7 +2,7 @@ var thisTagFn = require('./thisTag.js');
 
 var execute = function(executionContext, beDOMNodes) {
     console.log('============= Binding phase ==============');
-    _.each(beDOMNodes, function(beDOMNode) {
+    _.each(beDOMNodes, function(beDOMNode) { //TODO reduce beDOMNodes[] on thisTag => then return beDOMNodes[]
         var thisTag = thisTagFn(executionContext, beDOMNodes, beDOMNode);
         try {
             eval(beDOMNode.commands);
