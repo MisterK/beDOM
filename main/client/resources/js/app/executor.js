@@ -1,15 +1,16 @@
-var thisTagFn = require('./thisTag.js');
+var ThisTag = require('./thisTag.js');
 
-var execute = function(executionContext, beDOMNodes) {
+var execute = function(executionContext) {
     console.log('============= Binding phase ==============');
-    _.each(beDOMNodes, function(beDOMNode) { //TODO reduce beDOMNodes[] on thisTag => then return beDOMNodes[]
-        var thisTag = thisTagFn(executionContext, beDOMNodes, beDOMNode);
+    _.reduce(executionContext.beDOMNodes, function(thisTagFn, beDOMNode) {
+        var thisTag = thisTagFn.forBeDOMNode(beDOMNode);
         try {
             eval(beDOMNode.commands);
         } catch (e) {
             console.error('Error evaluating BeDOM script:' + e);
         }
-    });
+        return thisTag;
+    }, new ThisTag(executionContext));
     console.log("==============================================");
 };
 
