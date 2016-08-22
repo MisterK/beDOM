@@ -5,37 +5,31 @@ var BeDOMNode = function(targetTagId, targetDOMNode, hscript, commands) {
     this.targetDOMNode = targetDOMNode;
     this.hscript = hscript;
     this.commands = commands;
-    this.domEventTriggerContexts = [];
+    this.domEventListenerContexts = [];
     this.dataSourceListenerContexts = [];
     this.dataChanges = [];
 };
 
 // Binding phase methods => immutable
+BeDOMNode.prototype.copy = function(source) {
+    var newBeDOMNode = new BeDOMNode(this.targetTagId, this.targetDOMNode, this.hscript, this.commands);
+    _.assign(newBeDOMNode, this);
+    _.assign(newBeDOMNode, source);
+    return newBeDOMNode;
+};
 
 BeDOMNode.prototype.appendCommands = function(commands) {
-    var newNode = this.clone();
-    newNode.commands += " \n" + commands;
-    return newNode;
+    return this.copy({commands: this.commands +" \n" + commands});
 };
 
 BeDOMNode.prototype.updateHScript = function(hscript) {
-    var newNode = this.clone();
-    newNode.hscript = hscript;
-    return newNode;
+    return this.copy({hscript: hscript});
 };
 
 BeDOMNode.prototype.addDataChange = function(dataChange) {
-    var newNode = this.clone();
     var newDataChanges = _.clone(this.dataChanges);
     newDataChanges.push(dataChange);
-    newNode.dataChanges = newDataChanges;
-    return newNode;
-};
-
-BeDOMNode.prototype.clone = function() {
-    var newNode = new BeDOMNode(this.targetTagId, this.targetDOMNode, this.hscript, this.commands);
-    _.assign(newNode, this);
-    return newNode;
+    return this.copy({dataChanges: newDataChanges});
 };
 
 BeDOMNode.prototype.cloneHScript = function() {
@@ -45,6 +39,13 @@ BeDOMNode.prototype.cloneHScript = function() {
 };
 
 //Execution phase methods, mutable
+BeDOMNode.prototype.addDomEventListenerContext = function(domEventListenerContext) { //TODO make immutable?
+    this.domEventListenerContexts.push(domEventListenerContext);
+};
+
+BeDOMNode.prototype.addDataSourceListenerContext = function(dataSourceListenerContext) { //TODO make immutable?
+    this.dataSourceListenerContexts.push(dataSourceListenerContext);
+};
 
 BeDOMNode.prototype.clear = function(hscript) {
     this.hscript = hscript;

@@ -1,43 +1,37 @@
-var triggerContextsForDOMEventType = function(eventType) {
-    return function(triggerContext) {
-        return triggerContext.trigger.triggerEventName == eventType;
+var listenerContextsForDOMEventType = function(eventType) {
+    return function(listenerContext) {
+        return listenerContext.trigger.triggerEventName == eventType;
     }
 };
 
-var activatedTriggerContexts = function(eventTargetBeDOMNode) {
-    return function(triggerContext) {
-        return triggerContext.trigger.domTriggerFunction(
-            eventTargetBeDOMNode.targetDOMNode, triggerContext.triggerArguments);
+var activatedListenerContexts = function(eventTargetBeDOMNode) {
+    return function(listenerContext) {
+        return listenerContext.trigger.domTriggerFunction(
+            eventTargetBeDOMNode.targetDOMNode, listenerContext.triggerArguments);
     };
 };
 
-var transfunctorsForTriggerContext = function(triggerContextForBeDOMElement) {
-    return _.map(triggerContextForBeDOMElement.actionCallbacks, function(actionCallback) {
+var transfunctorsForListenerContext = function(listenerContextForBeDOMElement) {
+    return _.map(listenerContextForBeDOMElement.actionCallbacks, function(actionCallback) {
         return actionCallback.transFunctors;
     });
 };
 
-var getTransformationsForDOMEvent = function(event) {
-    var eventTargetBeDOMNode = event.data;
-    if (_.isUndefined(eventTargetBeDOMNode)) {
-        console.error('Could not find related beDOMNode when receiving event on DOM node');
-        return [];
-    }
+var getTransformationsForDOMEvent = function(event, eventTargetBeDOMNode) {
     console.log('============== Event =======================');
     console.log('Event "' + event.type + '" triggered on BeDOMNode "' + eventTargetBeDOMNode.targetTagId + '"');
 
-    return _(eventTargetBeDOMNode.domEventTriggerContexts)
-        .filter(triggerContextsForDOMEventType(event.type))
-        .filter(activatedTriggerContexts(eventTargetBeDOMNode))
-        .groupBy(function(triggerContext) { return triggerContext.targetBeDOMNode.targetTagId; })
-        .values()
-        .map(function (triggerContextsForBeDOMElement) {
-            var targetBeDOMNode = triggerContextsForBeDOMElement[0].targetBeDOMNode;
-            console.log('  => ' + triggerContextsForBeDOMElement.length + ' triggerContext(s) found for BeDOMNode "'
+    return _(eventTargetBeDOMNode.domEventListenerContexts)
+        .filter(listenerContextsForDOMEventType(event.type))
+        .filter(activatedListenerContexts(eventTargetBeDOMNode))
+        .groupBy(function(listenerContext) { return listenerContext.targetBeDOMNode.targetTagId; })
+        .mapValues(function (listenerContextsForBeDOMElement) {
+            var targetBeDOMNode = listenerContextsForBeDOMElement[0].targetBeDOMNode;
+            console.log('  => ' + listenerContextsForBeDOMElement.length + ' listenerContext(s) found for BeDOMNode "'
                 + targetBeDOMNode.targetTagId+ '"');
 
-            var transFunctors = _(triggerContextsForBeDOMElement)
-                .map(transfunctorsForTriggerContext).flatten().value();
+            var transFunctors = _(listenerContextsForBeDOMElement)
+                .map(transfunctorsForListenerContext).flatten().value();
             console.log('    => ' + transFunctors.length + ' transFunctor(s) found for BeDOMNode "'
                 + targetBeDOMNode.targetTagId + '"');
             if (transFunctors.length == 0) { //TODO Minor: return Absent => flatten

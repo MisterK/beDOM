@@ -11,9 +11,7 @@
 == IMPROVEMENTS ==
 - Encapsulate IO/Mutability in the execution (using Monet.IO?)
 - Add clearWithNewHScript() on BeDOMNode
-- thisTag => no more mutations on BeDOMNode's domEventTriggerContexts and dataSourceListenerContexts
-    - Implement copy() in BeDOMNode, rather than clone()
-- Try to compact triggerContexts for same trigger and DBListeners for same field at the end of binding phase, rather than on event?
+- Try to compact listenerContexts for same trigger and DBListeners for same field at the end of binding phase, rather than on event?
 - TransFunctors' input should be hscript, and source should be the original BeDOMNode, to compare with resulting one if necessary?
     -> rename transFunctors into vdomFunctors
 - contraMap() to transform/filter source?
@@ -23,6 +21,8 @@
     re-evaluate when event occurs
     or listen to all events on dom?
     or let user choose ("managed" mode vs "non-managed")
+- thisTag => no more mutations on BeDOMNode's domEventListenerContexts and dataSourceListenerContexts
+     => use targetTagId only in listener and resolve node on dom event execution?
 
 == TODO ==
 - Test more complex composition
